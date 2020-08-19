@@ -773,6 +773,7 @@ class GPLoad_FormatOpts_TestCase(unittest.TestCase):
         write_config_file(mode='merge',reuse_flag='true',fast_match='false',file='data_file2.txt',table='testpk',config='config/config_file2')
         f = open(mkpath('query40.sql'),'a')
         f.write("\! gpload -f "+mkpath('config/config_file2')+ " -d reuse_gptest\n")
+        f.write("\! psql -d reuse_gptest -c 'drop table testpk;'\n")
         f.close()
         self.doTest(40)
 
