@@ -9,10 +9,6 @@ import socket
 import fileinput
 import platform
 import re
-<<<<<<< HEAD
-import subprocess
-import pg
-=======
 #import yaml
 import ruamel.yaml
 import pytest
@@ -35,16 +31,15 @@ except Exception as e:
     errorMsg = "Please check if you have the correct Visual Studio redistributable package installed.\n"
     sys.stderr.write(str(errorMsg))
     sys.exit(2)
->>>>>>> refactor gpload test file TEST.py
 
 def get_port_from_conf():
     file = os.environ.get('MASTER_DATA_DIRECTORY')+'/postgresql.conf'
     if os.path.isfile(file):
         with open(file) as f:
-            for line in f:
-                match = re.search('port=\d+',line)
+            for line in f.xreadlines():
+                match = re.search(r'port=\d+',line)
                 if match:
-                    match1 = re.search('\d+', match.group())
+                    match1 = re.search(r'\d+', match.group())
                     if match1:
                         return match1.group()
 
@@ -73,7 +68,7 @@ def getPortMasterOnly(host = 'localhost',master_value = None,
                       user = os.environ.get('USER'),gphome = os.environ['GPHOME'],
                       mdd=os.environ['MASTER_DATA_DIRECTORY'],port = os.environ['PGPORT']):
 
-    master_pattern = "Context:\s*-1\s*Value:\s*\d+"
+    master_pattern = r"Context:\s*-1\s*Value:\s*\d+"
     command = "gpconfig -s %s" % ( "port" )
 
     cmd = "source %s/greenplum_path.sh; export MASTER_DATA_DIRECTORY=%s; export PGPORT=%s; %s" \
@@ -151,7 +146,7 @@ def write_config_file(config='config/config_file',file='data/external_file_01.tx
     Returns:
         none
     '''
-    S = ruamel.yaml.scalarstring.SingleQuotedScalarString
+    S = ruamel.yaml.scalarstring.SingleQuotedScalarString # use S if you want str to be single quoted
     conf = {}
     conf['VERSION'] = '1.0.0.1'
     conf['DATABASE'] = 'reuse_gptest'
@@ -168,7 +163,7 @@ def write_config_file(config='config/config_file',file='data/external_file_01.tx
     if columns:
         columns_quoted = []
         for c in columns:
-            for key, val in c.iteritems():
+            for key, val in c.items():
                 columns_quoted.append({S(key):val})
         gpload_input.append({"COLUMNS":columns_quoted})
     if format:
@@ -208,7 +203,7 @@ def write_config_file(config='config/config_file',file='data/external_file_01.tx
         gpload_output.append({'UPDATE_CONDITION':update_condition})
     if mapping:
         mapping_quoted = {}
-        for key, val in mapping.iteritems():
+        for key, val in mapping.items():
             mapping_quoted[S(key)]= S(val)
         gpload_output.append({'MAPPING':mapping_quoted})
     conf['GPLOAD']['OUTPUT'] = gpload_output
@@ -359,18 +354,19 @@ def isFileEqual( f1, f2, optionalFlags = "", outputPath = "", myinitfile = ""):
     dfile = diffFile( f1, outputPath = outputPath )
     # Gets the suitePath name to add init_file
     suitePath = f1[0:f1.rindex( "/" )]
+    gphome = os.environ['GPHOME']
     if os.path.exists(suitePath + "/init_file"):
-        (ok, out) = run('../gpdiff.pl -w ' + optionalFlags + \
+        (ok, out) = run(gphome+'/lib/postgresql/pgxs/src/test/regress/gpdiff.pl -w ' + optionalFlags + \
                               ' -I NOTICE: -I HINT: -I CONTEXT: -I GP_IGNORE: -I DROP --gp_init_file=%s/global_init_file --gp_init_file=%s/init_file '
                               '%s %s > %s 2>&1' % (LMYD, suitePath, f1, f2, dfile))
 
     else:
         if os.path.exists(myinitfile):
-            (ok, out) = run('../gpdiff.pl -w ' + optionalFlags + \
+            (ok, out) = run(gphome+'/lib/postgresql/pgxs/src/test/regress/gpdiff.pl -w ' + optionalFlags + \
                                   ' -I NOTICE: -I HINT: -I CONTEXT: -I GP_IGNORE: -I DROP --gp_init_file=%s/global_init_file --gp_init_file=%s '
                                   '%s %s > %s 2>&1' % (LMYD, myinitfile, f1, f2, dfile))
         else:
-            (ok, out) = run( '../gpdiff.pl -w ' + optionalFlags + \
+            (ok, out) = run( gphome+'/lib/postgresql/pgxs/src/test/regress/gpdiff.pl -w ' + optionalFlags + \
                               ' -I NOTICE: -I HINT: -I CONTEXT: -I GP_IGNORE: -I DROP --gp_init_file=%s/global_init_file '
                               '%s %s > %s 2>&1' % ( LMYD, f1, f2, dfile ) )
 
@@ -396,7 +392,7 @@ def modify_sql_file(num):
     if os.path.isfile(file):
         for line in fileinput.FileInput(file,inplace=1):
             line = line.replace("gpload.py ","gpload ")
-            print((str(re.sub('\n','',line))))
+            print (str(re.sub('\n','',line)))
 
 def copy_data(source='',target=''):
     cmd = 'cp '+ mkpath('data/' + source) + ' ' + mkpath(target)
@@ -414,7 +410,7 @@ def get_table_name():
                   )
     except Exception as e:
         errorMessage = str(e)
-        print(('could not connect to database: ' + errorMessage))
+        print ('could not connect to database: ' + errorMessage)
     queryString = """SELECT relname
                      from pg_class
                      WHERE relname
@@ -433,7 +429,7 @@ def drop_tables():
                   )
     except Exception as e:
         errorMessage = str(e)
-        print(('could not connect to database: ' + errorMessage))
+        print ('could not connect to database: ' + errorMessage)
 
     tableList = get_table_name()
     for i in tableList:
@@ -494,11 +490,19 @@ def doTest(num):
     runfile(file)
     check_result(file)
 
+def prepare_test_file(num):
+    """
+    initialize query#.sql for test case num
+    """
+    f = open(mkpath('query%d.sql' % num),'w')
+    f.write("\\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n"+"\\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n")
+    f.close()
+
 def test_00_gpload_formatOpts_setup():
     "0  gpload setup"
-    for num in range(1,43):
+    for num in range(1,44):
         f = open(mkpath('query%d.sql' % num),'w')
-        f.write("\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n"+"\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n")
+        f.write("\\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n"+"\\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n")
         f.close()
     file = mkpath('setup.sql')
     runfile(file)
@@ -544,7 +548,7 @@ def test_07_gpload_reuse_table_insert_mode_without_reuse():
     "7  gpload insert mode without reuse"
     runfile(mkpath('setup.sql'))
     f = open(mkpath('query7.sql'),'a')
-    f.write("\! psql -d reuse_gptest -c 'select count(*) from texttable;'")
+    f.write("\\! psql -d reuse_gptest -c 'select count(*) from texttable;'")
     f.close()
     write_config_file(mode='insert',reuse_tables=False)
     doTest(7)
@@ -559,7 +563,7 @@ def test_08_gpload_reuse_table_update_mode_with_reuse():
 def test_09_gpload_reuse_table_update_mode_without_reuse():
     "9  gpload update mode without reuse"
     f = open(mkpath('query9.sql'),'a')
-    f.write("\! psql -d reuse_gptest -c 'select count(*) from texttable;'\n"+"\! psql -d reuse_gptest -c 'select * from texttable where n2=222;'")
+    f.write("\\! psql -d reuse_gptest -c 'select count(*) from texttable;'\n"+"\\! psql -d reuse_gptest -c 'select * from texttable where n2=222;'")
     f.close()
     copy_data('external_file_05.txt','data_file.txt')
     write_config_file(mode='update',reuse_tables=False,file='data_file.txt')
@@ -662,7 +666,7 @@ def test_21_gpload_formatOpts_escape():
 #def test_22_gpload_error_count(self):
 #    "22  gpload error count"
 #    f = open(mkpath('query22.sql'),'a')
-#    f.write("\! psql -d reuse_gptest -c 'select count(*) from csvtable;'")
+#    f.write("\\! psql -d reuse_gptest -c 'select count(*) from csvtable;'")
 #    f.close()
 #    f = open(mkpath('data/large_file.csv'),'w')
 #    for i in range(0, 10000):
@@ -680,7 +684,7 @@ def test_23_gpload_error_count():
     file = mkpath('setup.sql')
     runfile(file)
     f = open(mkpath('query23.sql'),'a')
-    f.write("\! psql -d reuse_gptest -c 'select count(*) from csvtable;'")
+    f.write("\\! psql -d reuse_gptest -c 'select count(*) from csvtable;'")
     f.close()
     f = open(mkpath('data/large_file.csv'),'w')
     for i in range(0, 10000):
@@ -698,7 +702,7 @@ def test_24_gpload_error_count():
     file = mkpath('setup.sql')
     runfile(file)
     f = open(mkpath('query24.sql'),'a')
-    f.write("\! psql -d reuse_gptest -c 'select count(*) from csvtable;'")
+    f.write("\\! psql -d reuse_gptest -c 'select count(*) from csvtable;'")
     f.close()
     f = open(mkpath('data/large_file.csv'),'w')
     for i in range(0, 10000):
@@ -716,7 +720,7 @@ def test_25_gpload_ext_staging_table():
     file = mkpath('setup.sql')
     runfile(file)
     f = open(mkpath('query25.sql'),'a')
-    f.write("\! psql -d reuse_gptest -c 'select count(*) from csvtable;'")
+    f.write("\\! psql -d reuse_gptest -c 'select count(*) from csvtable;'")
     f.close()
     copy_data('external_file_13.csv','data_file.csv')
     write_config_file(reuse_tables=True, format='csv', file='data_file.csv', table='csvtable', delimiter=',', log_errors=True,error_limit=10,staging_table='staging_table')
@@ -727,7 +731,7 @@ def test_26_gpload_ext_staging_table_with_externalschema():
     file = mkpath('setup.sql')
     runfile(file)
     f = open(mkpath('query26.sql'),'a')
-    f.write("\! psql -d reuse_gptest -c 'select count(*) from csvtable;'")
+    f.write("\\! psql -d reuse_gptest -c 'select count(*) from csvtable;'")
     f.close()
     copy_data('external_file_13.csv','data_file.csv')
     write_config_file(reuse_tables=True, format='csv', file='data_file.csv', table='csvtable', delimiter=',',log_errors=True,error_limit=10, staging_table='staging_table',externalSchema='test')
@@ -738,7 +742,7 @@ def test_27_gpload_ext_staging_table_with_externalschema():
     file = mkpath('setup.sql')
     runfile(file)
     f = open(mkpath('query27.sql'),'a')
-    f.write("\! psql -d reuse_gptest -c 'select count(*) from test.csvtable;'")
+    f.write("\\! psql -d reuse_gptest -c 'select count(*) from test.csvtable;'")
     f.close()
     copy_data('external_file_13.csv','data_file.csv')
     write_config_file(reuse_tables=True, format='csv', file='data_file.csv',table='test.csvtable',delimiter=',',log_errors=True,error_limit=10,staging_table='staging_table',externalSchema='%')
@@ -749,7 +753,7 @@ def test_28_gpload_ext_staging_table_with_dot():
     file = mkpath('setup.sql')
     runfile(file)
     f = open(mkpath('query28.sql'),'a')
-    f.write("\! psql -d reuse_gptest -c 'select count(*) from test.csvtable;'")
+    f.write("\\! psql -d reuse_gptest -c 'select count(*) from test.csvtable;'")
     f.close()
     copy_data('external_file_13.csv','data_file.csv')
     write_config_file(reuse_tables=True, file='data_file.csv',table='test.csvtable',format='csv',delimiter=',',log_errors=True,error_limit=10,staging_table='t.staging_table')
@@ -759,7 +763,7 @@ def test_29_gpload_reuse_table_insert_mode_with_reuse_and_null():
     "29  gpload insert mode with reuse and null"
     runfile(mkpath('setup.sql'))
     f = open(mkpath('query29.sql'),'a')
-    f.write("\! psql -d reuse_gptest -c 'select count(*) from texttable where n2 is null;'")
+    f.write("\\! psql -d reuse_gptest -c 'select count(*) from texttable where n2 is null;'")
     f.close()
     copy_data('external_file_14.txt','data_file.txt')
     write_config_file(mode='insert', reuse_tables=True, file='data_file.txt',log_errors=True, error_limit=100)
@@ -850,7 +854,7 @@ def test_40_gpload_merge_mode_with_multi_pk():
     write_config_file(mode='merge',reuse_tables=True,fast_match=False,file='data_file2.txt',table='testpk',config='config/config_file2')
     # write_config_file(mode='merge',reuse_flag='true',fast_match='false',file='data_file2.txt',table='testpk',config='config/config_file2')
     f = open(mkpath('query40.sql'),'w')
-    f.write("""\! psql -d reuse_gptest -c "create table testpk (n1 integer, s1 integer, s2 varchar(128), n2 integer, primary key(n1,s1,s2))\
+    f.write("""\\! psql -d reuse_gptest -c "create table testpk (n1 integer, s1 integer, s2 varchar(128), n2 integer, primary key(n1,s1,s2))\
             partition by range (s1)\
             subpartition by list(s2)\
             SUBPARTITION TEMPLATE\
@@ -861,9 +865,9 @@ def test_40_gpload_merge_mode_with_multi_pk():
             (start (1) end (13) every (1),\
             default partition others)\
             ;"\n""")
-    f.write("\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n")
-    f.write("\! gpload -f "+mkpath('config/config_file2')+ " -d reuse_gptest\n")
-    f.write("\! psql -d reuse_gptest -c 'drop table testpk;'\n")
+    f.write("\\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n")
+    f.write("\\! gpload -f "+mkpath('config/config_file2')+ " -d reuse_gptest\n")
+    f.write("\\! psql -d reuse_gptest -c 'drop table testpk;'\n")
     f.close()
     doTest(40)
 
@@ -879,7 +883,7 @@ def test_41_gpload_special_char():
     match_columns = ['"Field1"', '"Field#2"']
     write_config_file(update_columns=update_columns ,config='config/config_file2', mode='merge',reuse_tables=True,fast_match=False, file='data_file2.txt',table='testSpecialChar',columns=columns, delimiter=';',match_columns=match_columns)
     f = open(mkpath('query41.sql'),'a')
-    f.write("\! gpload -f "+mkpath('config/config_file2')+ " -d reuse_gptest\n")
+    f.write("\\! gpload -f "+mkpath('config/config_file2')+ " -d reuse_gptest\n")
     f.close()
     doTest(41)
 
@@ -890,11 +894,21 @@ def test_42_gpload_update_condition():
     copy_data('external_file_01.txt','data_file.txt')
     copy_data('external_file_03.txt','data_file2.txt')
     f = open(mkpath('query42.sql'),'w')
-    f.write("\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n")
-    f.write("\! gpload -f "+mkpath('config/config_file2')+ " -d reuse_gptest\n")
+    f.write("\\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n")
+    f.write("\\! gpload -f "+mkpath('config/config_file2')+ " -d reuse_gptest\n")
     f.close()
     write_config_file(mode='insert', format='text',file='data_file.txt',table='texttable',delimiter="|")
     update_columns = ['s2']
     match_columns = ['n1']
     write_config_file(update_columns=update_columns,match_columns=match_columns,config='config/config_file2',mode='update', update_condition="s3='shpits'", format='text',file='data_file2.txt',table='texttable',delimiter="'")
     doTest(42)
+
+def test_43_gpload_column_without_data_type():
+    "43 gpload column name has capital letters and without data type"
+    file = mkpath('setup.sql')
+    prepare_test_file(43)
+    runfile(file)
+    copy_data('external_file_15.txt','data_file.txt')
+    columns = [{'Field1': ''},{'Field#2': ''}]
+    write_config_file(mode='insert',reuse_tables=True,fast_match=False, file='data_file.txt',table='testSpecialChar',columns=columns, delimiter=";")
+    doTest(43)
