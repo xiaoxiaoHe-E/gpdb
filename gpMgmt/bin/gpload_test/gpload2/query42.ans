@@ -1,18 +1,19 @@
-2020-10-13 17:52:40|INFO|gpload session started 2020-10-13 17:52:40
-2020-10-13 17:52:40|INFO|setting schema 'public' for table 'testspecialchar'
-2020-10-13 17:52:40|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
-2020-10-13 17:52:40|INFO|did not find an external table to reuse. creating ext_gpload_reusable_d5200d42_0d39_11eb_992a_00505698707d
-2020-10-13 17:52:40|INFO|running time: 0.09 seconds
-2020-10-13 17:52:40|INFO|rows Inserted          = 8
-2020-10-13 17:52:40|INFO|rows Updated           = 0
-2020-10-13 17:52:40|INFO|data formatting errors = 0
-2020-10-13 17:52:40|INFO|gpload succeeded
-2020-10-13 17:52:40|INFO|gpload session started 2020-10-13 17:52:40
-2020-10-13 17:52:40|INFO|setting schema 'public' for table 'testspecialchar'
-2020-10-13 17:52:40|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
-2020-10-13 17:52:40|INFO|reusing external table ext_gpload_reusable_d5200d42_0d39_11eb_992a_00505698707d
-2020-10-13 17:52:40|INFO|running time: 0.07 seconds
-2020-10-13 17:52:40|INFO|rows Inserted          = 8
-2020-10-13 17:52:40|INFO|rows Updated           = 0
-2020-10-13 17:52:40|INFO|data formatting errors = 0
-2020-10-13 17:52:40|INFO|gpload succeeded
+2020-10-21 03:20:55|INFO|gpload session started 2020-10-21 03:20:55
+2020-10-21 03:20:55|INFO|setting schema 'public' for table 'texttable'
+2020-10-21 03:20:55|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
+2020-10-21 03:20:55|INFO|did not find an external table to reuse. creating ext_gpload_reusable_6e4f5af0_134c_11eb_a016_0242ac120003
+2020-10-21 03:20:56|INFO|running time: 0.78 seconds
+2020-10-21 03:20:56|INFO|rows Inserted          = 16
+2020-10-21 03:20:56|INFO|rows Updated           = 0
+2020-10-21 03:20:56|INFO|data formatting errors = 0
+2020-10-21 03:20:56|INFO|gpload succeeded
+2020-10-21 03:20:56|INFO|gpload session started 2020-10-21 03:20:56
+2020-10-21 03:20:56|INFO|setting schema 'public' for table 'texttable'
+2020-10-21 03:20:57|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file2.txt" -t 30
+2020-10-21 03:20:57|INFO|did not find a staging table to reuse. creating staging_gpload_reusable_bf2513bc4e5c7466f3cd5abecf21f8f4
+2020-10-21 03:20:57|INFO|did not find an external table to reuse. creating ext_gpload_reusable_6ef8ebb0_134c_11eb_82e5_0242ac120003
+2020-10-21 03:20:57|INFO|running time: 0.80 seconds
+2020-10-21 03:20:57|INFO|rows Inserted          = 0
+2020-10-21 03:20:57|INFO|rows Updated           = 15
+2020-10-21 03:20:57|INFO|data formatting errors = 0
+2020-10-21 03:20:57|INFO|gpload succeeded

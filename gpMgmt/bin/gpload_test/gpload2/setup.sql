@@ -6,6 +6,7 @@ CREATE DATABASE reuse_gptest;
 
 CREATE SCHEMA test;
 
+set client_min_messages='warning';
 DROP EXTERNAL TABLE IF EXISTS temp_gpload_staging_table;
 DROP TABLE IF EXISTS texttable;
 DROP TABLE IF EXISTS csvtable;

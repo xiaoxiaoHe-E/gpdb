@@ -64,24 +64,24 @@ NOTICE:  CREATE TABLE will create partition "testpk_1_prt_13_2_prt_asia" for tab
 NOTICE:  CREATE TABLE will create partition "testpk_1_prt_13_2_prt_europe" for table "testpk_1_prt_13"
 NOTICE:  CREATE TABLE will create partition "testpk_1_prt_13_2_prt_other_regions" for table "testpk_1_prt_13"
 CREATE TABLE
-2020-08-21 14:09:30|INFO|gpload session started 2020-08-21 14:09:30
-2020-08-21 14:09:30|INFO|setting schema 'public' for table 'testpk'
-2020-08-21 14:09:30|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
-2020-08-21 14:09:30|INFO|did not find a staging table to reuse. creating staging_gpload_reusable_9cfc886e8f484d05619f4e7cb992ce20
-2020-08-21 14:09:30|INFO|did not find an external table to reuse. creating ext_gpload_reusable_e068ae78_e374_11ea_bc95_00505698707d
-2020-08-21 14:09:31|INFO|running time: 0.19 seconds
-2020-08-21 14:09:31|INFO|rows Inserted          = 4
-2020-08-21 14:09:31|INFO|rows Updated           = 0
-2020-08-21 14:09:31|INFO|data formatting errors = 0
-2020-08-21 14:09:31|INFO|gpload succeeded
-2020-08-21 14:09:31|INFO|gpload session started 2020-08-21 14:09:31
-2020-08-21 14:09:31|INFO|setting schema 'public' for table 'testpk'
-2020-08-21 14:09:31|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file2.txt" -t 30
-2020-08-21 14:09:31|INFO|reusing staging table staging_gpload_reusable_9cfc886e8f484d05619f4e7cb992ce20
-2020-08-21 14:09:31|INFO|did not find an external table to reuse. creating ext_gpload_reusable_e0aab714_e374_11ea_a28c_00505698707d
-2020-08-21 14:09:31|INFO|running time: 0.19 seconds
-2020-08-21 14:09:31|INFO|rows Inserted          = 1
-2020-08-21 14:09:31|INFO|rows Updated           = 4
-2020-08-21 14:09:31|INFO|data formatting errors = 0
-2020-08-21 14:09:31|INFO|gpload succeeded
+2020-10-20 06:57:00|INFO|gpload session started 2020-10-20 06:57:00
+2020-10-20 06:57:00|INFO|setting schema 'public' for table 'testpk'
+2020-10-20 06:57:00|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
+2020-10-20 06:57:00|INFO|did not find a staging table to reuse. creating staging_gpload_reusable_9cfc886e8f484d05619f4e7cb992ce20
+2020-10-20 06:57:01|INFO|did not find an external table to reuse. creating ext_gpload_reusable_73de6764_12a1_11eb_a323_0242ac120002
+2020-10-20 06:57:01|INFO|running time: 0.96 seconds
+2020-10-20 06:57:01|INFO|rows Inserted          = 4
+2020-10-20 06:57:01|INFO|rows Updated           = 0
+2020-10-20 06:57:01|INFO|data formatting errors = 0
+2020-10-20 06:57:01|INFO|gpload succeeded
+2020-10-20 06:57:01|INFO|gpload session started 2020-10-20 06:57:01
+2020-10-20 06:57:01|INFO|setting schema 'public' for table 'testpk'
+2020-10-20 06:57:02|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file2.txt" -t 30
+2020-10-20 06:57:02|INFO|reusing staging table staging_gpload_reusable_9cfc886e8f484d05619f4e7cb992ce20
+2020-10-20 06:57:02|INFO|did not find an external table to reuse. creating ext_gpload_reusable_748b85b6_12a1_11eb_96f7_0242ac120002
+2020-10-20 06:57:02|INFO|running time: 0.86 seconds
+2020-10-20 06:57:02|INFO|rows Inserted          = 1
+2020-10-20 06:57:02|INFO|rows Updated           = 4
+2020-10-20 06:57:02|INFO|data formatting errors = 0
+2020-10-20 06:57:02|INFO|gpload succeeded
 DROP TABLE
