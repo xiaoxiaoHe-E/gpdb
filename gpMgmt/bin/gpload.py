@@ -69,6 +69,12 @@ else:
 if windowsPlatform == False:
    import select
 
+from sys import version_info
+if version_info.major == 2 :
+    import __builtin__
+    long = __builtin__.long
+else:
+    long = int
 
 EXECNAME = 'gpload'
 
@@ -2027,6 +2033,16 @@ class gpload:
     # such a table exists.
     #
     def get_reuse_exttable_query(self, formatType, formatOpts, limitStr, from_cols, schemaName, log_errors, encodingCode):
+        '''
+        In order to find out whether we have an existing external table in the
+        catalog which could be reused for this operation we need to make sure
+        that it has the same column names and types, the same data format, and
+        location specification, and single row error handling specs.
+
+        Return:
+            SQL to run in order to find out whether such a table exists.
+        '''
+
         sqlFormat = """select attrelid::regclass
                  from (
                         select
