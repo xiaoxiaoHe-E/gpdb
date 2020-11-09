@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env pytest
 
 import unittest
 import sys
@@ -76,7 +76,7 @@ def getPortMasterOnly(host = 'localhost',master_value = None,
 
     (ok,out) = run(cmd)
     if not ok:
-        cmd = "python2 /usr/local/gpdb/bin/gpconfig -s port"
+        cmd = "python %s/bin/gpconfig -s port"%(gphome)
         (ok,out) = run(cmd)
         if not ok:
             raise Exception("Unable to connect to segment server %s as user %s" % (host, user))
@@ -161,11 +161,7 @@ def write_config_file(config='config/config_file',file='data/external_file_01.tx
         'FILE': [mkpath(file)]}
     gpload_input.append({'SOURCE':input_source})
     if columns:
-        columns_quoted = []
-        for c in columns:
-            for key, val in c.items():
-                columns_quoted.append({S(key):val})
-        gpload_input.append({"COLUMNS":columns_quoted})
+        gpload_input.append({"COLUMNS":columns})
     if format:
         gpload_input.append({'FORMAT':format})
     if log_errors:
@@ -181,7 +177,7 @@ def write_config_file(config='config/config_file',file='data/external_file_01.tx
     if escape:
         gpload_input.append({'ESCAPE':escape})
     if null_as:
-        gpload_input.append({'NULL_AS':S(null_as)})
+        gpload_input.append({'NULL_AS':null_as})
     if fill_missing_fields:
         gpload_input.append({'FILL_MISSING_FIELDS':fill_missing_fields})
     if quote:
@@ -196,9 +192,9 @@ def write_config_file(config='config/config_file',file='data/external_file_01.tx
     gpload_output.append({'TABLE':table})
     gpload_output.append({'MODE':mode})
     if match_columns:
-        gpload_output.append({'MATCH_COLUMNS':[S(m) for m in match_columns]})
+        gpload_output.append({'MATCH_COLUMNS':match_columns})
     if update_columns:
-        gpload_output.append({'UPDATE_COLUMNS':[S(u) for u in update_columns]})
+        gpload_output.append({'UPDATE_COLUMNS':update_columns})
     if update_condition:
         gpload_output.append({'UPDATE_CONDITION':update_condition})
     if mapping:
@@ -492,7 +488,7 @@ def doTest(num):
 
 def prepare_test_file(num):
     """
-    initialize query#.sql for test case num
+    initialize specific query#.sql for test case num
     """
     f = open(mkpath('query%d.sql' % num),'w')
     f.write("\\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n"+"\\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n")
@@ -500,6 +496,7 @@ def prepare_test_file(num):
 
 def test_00_gpload_formatOpts_setup():
     "0  gpload setup"
+    """setup query.sql for all cases"""
     for num in range(1,44):
         f = open(mkpath('query%d.sql' % num),'w')
         f.write("\\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n"+"\\! gpload -f "+mkpath('config/config_file')+ " -d reuse_gptest\n")
@@ -876,7 +873,7 @@ def test_41_gpload_special_char():
     file = mkpath('setup.sql')
     runfile(file)
     copy_data('external_file_15.txt','data_file.txt')
-    columns = [{'Field1': 'bigint'},{'Field#2': 'text'}]
+    columns = [{'"Field1"': 'bigint'},{'"Field#2"': 'text'}]
     write_config_file(mode='insert',reuse_tables=True,fast_match=False, file='data_file.txt',table='testSpecialChar', columns=columns,delimiter=";")
     copy_data('external_file_16.txt','data_file2.txt')
     update_columns=['"Field#2"']
@@ -909,6 +906,6 @@ def test_43_gpload_column_without_data_type():
     prepare_test_file(43)
     runfile(file)
     copy_data('external_file_15.txt','data_file.txt')
-    columns = [{'Field1': ''},{'Field#2': ''}]
+    columns = [{'"Field1"': ''},{'"Field#2"': ''}]
     write_config_file(mode='insert',reuse_tables=True,fast_match=False, file='data_file.txt',table='testSpecialChar',columns=columns, delimiter=";")
     doTest(43)

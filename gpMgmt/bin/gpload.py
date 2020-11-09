@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # gpload - load file(s) into Greenplum Database
 # Copyright Greenplum 2008
@@ -73,7 +73,12 @@ else:
 if windowsPlatform == False:
    import select
 
-from past.builtins import long
+from sys import version_info
+if version_info.major == 2 :
+    import __builtin__
+    long = __builtin__.long
+else:
+    long = int
 
 EXECNAME = 'gpload'
 
@@ -1884,7 +1889,7 @@ class gpload:
                     self.log(self.DEBUG,
                              'getting source column data type from target')
                     for name, typ, mapto, hasseq in self.into_columns:
-                        if sqlIdentifierCompare(name, quote_ident(key)):
+                        if sqlIdentifierCompare(name, key):
                             d[key] = typ
                             break
 
@@ -1896,7 +1901,7 @@ class gpload:
 
                 # Mark this column as having no mapping, which is important
                 # for do_insert()
-                self.from_columns.append([quote_ident(key),d[key].lower(),None, False])
+                self.from_columns.append([key,d[key].lower(),None, False])
         else:
             self.from_columns = self.into_columns
             self.from_cols_from_user = False
@@ -1984,7 +1989,7 @@ class gpload:
             # see if it's a permissions issue or it actually doesn't exist
             tableName = quote_unident(self.table)
             tableSchema = quote_unident(self.schema)
-            sql = """select 1 from pg_class c, pg_namespace n:1900
+            sql = """select 1 from pg_class c, pg_namespace n
                         where c.relname = '%s' and
                         n.nspname = '%s' and
                         n.oid = c.relnamespace""" % (tableName, tableSchema)
@@ -2062,7 +2067,7 @@ class gpload:
                             on (pg_class.oid = attrelid)
                             %s
                         where
-                            relkind = 'f' and
+                            relkind = '%s' and
                             relname like 'ext_gpload_reusable_%%' and
                             attnum > 0 and
                             not attisdropped and %s
@@ -2072,6 +2077,7 @@ class gpload:
                     on(pgattr.attrelid = pgext.reloid)
                     """
         joinStr = ""
+        relkind = ""
         conditionStr = ""
 
         # if schemaName is None, find the resuable ext table which is visible to
@@ -2086,8 +2092,11 @@ class gpload:
                          on(pg_class.relnamespace = pgns.oid)
                       """
             conditionStr = "pgns.nspname = '%s'" % schemaName
-
-        sql = sqlFormat % (joinStr, conditionStr)
+        if noGpVersion or self.gpdb_version < "7.0.0":
+            relkind='r'
+        else:
+            relkind='f'
+        sql = sqlFormat % (joinStr, relkind, conditionStr)
 
         if noGpVersion or self.gpdb_version < "6.0.0":
             if log_errors:
@@ -2150,12 +2159,13 @@ class gpload:
                     on(pg_class.oid = pgext.reloid)
                     %s
                     where
-                    relkind = 'f' and
+                    relkind = '%s' and
                     relname like 'ext_gpload_reusable_%%' and
 		    %s
                     """
 
         joinStr = ""
+        relkind = ""
         conditionStr = ""
 
         # if schemaName is None, find the resuable ext table which is visible to
@@ -2169,8 +2179,11 @@ class gpload:
                     pg_namespace pgns
                     on(pg_class.relnamespace = pgns.oid)"""
             conditionStr = "pgns.nspname = '%s'" % schemaName
-
-        sql = sqlFormat % (joinStr, conditionStr)
+        if noGpVersion or self.gpdb_version < "7.0.0":
+            relkind='r'
+        else:
+            relkind='f'
+        sql = sqlFormat % (joinStr, relkind, conditionStr)
 
         if noGpVersion or self.gpdb_version < "6.0.0":
             if log_errors:
@@ -2234,7 +2247,7 @@ class gpload:
 
         return:
             sql(string)
-		'''
+        '''
         sql = """SELECT oid::regclass
                  FROM pg_class
                  WHERE relname = 'staging_gpload_reusable_%s';""" % (encoding_conditions)
@@ -2312,7 +2325,7 @@ class gpload:
             else:
                 self.control_file_warning(option +''' must be single ASCII character, you can also use unprintable characters(for example: '\\x1c' / E'\\x1c' or '\\u001c' / E'\\u001c' ''')
                 self.control_file_error("Invalid option, gpload quit immediately")
-                sys.exit(2);
+                sys.exit(2)
         else:
             self.formatOpts += "%s '%s' " % (specify_str, val)
 
@@ -2641,7 +2654,7 @@ class gpload:
     def map_stuff(self,config,configFormat,index):
         '''
         get the config and find it in into_columns_dict,
-        report error if no column finded in into_columns_dict, or no mapping for it.
+        report error if no column finded in into_columns_dict or no mapping for it.
 
         Return
             list: [ configFormat(into_clomuns[0], into_clomuns[index]) ]
