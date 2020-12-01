@@ -174,7 +174,6 @@ def write_config_file(version='1.0.0.1', database='reuse_gptest', user=os.enviro
         f.write("\nUSER: "+user)
     f.write("\nHOST: "+host)
     f.write("\nPORT: "+str(port))
-
     f.write("\nGPLOAD:")
     f.write("\n   INPUT:")
     f.write("\n    - SOURCE:")
