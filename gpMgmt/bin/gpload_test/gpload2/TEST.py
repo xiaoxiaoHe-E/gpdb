@@ -160,7 +160,6 @@ if not os.path.exists(d):
 hostNameAddrs = get_ip(HOST)
 masterPort = getPortMasterOnly()
 
-
 def write_config_file(version='1.0.0.1', database='reuse_gptest', user=os.environ.get('USER'), host=hostNameAddrs, port=masterPort, config='config/config_file', local_host=[hostNameAddrs], file='data/external_file_01.txt', input_port='8081', port_range=None,
     ssl=None,columns=None, format='text', log_errors=None, error_limit=None, delimiter="'|'", encoding=None, escape=None, null_as=None, fill_missing_fields=None, quote=None, header=None, transform=None, transform_config=None, max_line_length=None, 
     table='texttable', mode='insert', update_columns=['n2'], update_condition=None, match_columns=['n1','s1','s2'], staging_table=None, mapping=None, externalSchema=None, preload=True, truncate=False, reuse_tables=True, fast_match=None,
@@ -1044,4 +1043,5 @@ def test_59_gpload_yaml_wrong_port():
     "59 gpload yaml writing a not exist port"
     copy_data('external_file_01.txt','data_file.txt')
     write_config_file(port='111111',format='text',file='data_file.txt',table='texttable')
+
 
