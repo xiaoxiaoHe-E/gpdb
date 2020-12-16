@@ -1,0 +1,18 @@
+2020-12-14 15:33:48|INFO|gpload session started 2020-12-14 15:33:48
+2020-12-14 15:33:48|INFO|setting schema 'public' for table 'chinese表'
+2020-12-14 15:33:48|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
+2020-12-14 15:33:48|INFO|did not find an external table to reuse. creating ext_gpload_reusable_b48acd8a_3dde_11eb_93aa_00505698707d
+2020-12-14 15:33:48|INFO|running time: 0.12 seconds
+2020-12-14 15:33:48|INFO|rows Inserted          = 7
+2020-12-14 15:33:48|INFO|rows Updated           = 0
+2020-12-14 15:33:48|INFO|data formatting errors = 0
+2020-12-14 15:33:48|INFO|gpload succeeded
+2020-12-14 15:33:48|INFO|gpload session started 2020-12-14 15:33:48
+2020-12-14 15:33:49|INFO|setting schema 'public' for table 'chinese表'
+2020-12-14 15:33:49|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
+2020-12-14 15:33:49|INFO|reusing external table ext_gpload_reusable_b48acd8a_3dde_11eb_93aa_00505698707d
+2020-12-14 15:33:49|INFO|running time: 0.11 seconds
+2020-12-14 15:33:49|INFO|rows Inserted          = 7
+2020-12-14 15:33:49|INFO|rows Updated           = 0
+2020-12-14 15:33:49|INFO|data formatting errors = 0
+2020-12-14 15:33:49|INFO|gpload succeeded
