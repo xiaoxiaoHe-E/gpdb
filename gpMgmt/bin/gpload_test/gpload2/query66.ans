@@ -1,18 +1,9 @@
-2020-12-11 11:11:25|INFO|gpload session started 2020-12-11 11:11:25
-2020-12-11 11:11:25|INFO|setting schema 'public' for table 'texttable'
-2020-12-11 11:11:25|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt.gz /home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file1.txt.bz2" -t 30
-2020-12-11 11:11:26|INFO|did not find an external table to reuse. creating ext_gpload_reusable_8dee69f2_3b5e_11eb_bbc5_00505698707d
-2020-12-11 11:11:26|INFO|running time: 0.12 seconds
-2020-12-11 11:11:26|INFO|rows Inserted          = 32
-2020-12-11 11:11:26|INFO|rows Updated           = 0
-2020-12-11 11:11:26|INFO|data formatting errors = 0
-2020-12-11 11:11:26|INFO|gpload succeeded
-2020-12-11 11:11:26|INFO|gpload session started 2020-12-11 11:11:26
-2020-12-11 11:11:26|INFO|setting schema 'public' for table 'texttable'
-2020-12-11 11:11:26|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt.gz /home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file1.txt.bz2" -t 30
-2020-12-11 11:11:26|INFO|reusing external table ext_gpload_reusable_8dee69f2_3b5e_11eb_bbc5_00505698707d
-2020-12-11 11:11:26|INFO|running time: 0.12 seconds
-2020-12-11 11:11:26|INFO|rows Inserted          = 32
-2020-12-11 11:11:26|INFO|rows Updated           = 0
-2020-12-11 11:11:26|INFO|data formatting errors = 0
-2020-12-11 11:11:26|INFO|gpload succeeded
+2021-01-08 16:05:21|INFO|gpload session started 2021-01-08 16:05:21
+2021-01-08 16:05:21|INFO|setting schema 'public' for table 'texttable'
+2021-01-08 16:05:21|INFO|started gpfdist -p 8081 -P 8082 -f "pathto/data_file.txt.gz pathto/data_file1.txt.bz2" -t 30
+2021-01-08 16:05:21|INFO|did not find an external table to reuse. creating ext_gpload_reusable_40f24a2a_5188_11eb_8c7a_00505698707d
+2021-01-08 16:05:21|INFO|running time: 0.09 seconds
+2021-01-08 16:05:21|INFO|rows Inserted          = 32
+2021-01-08 16:05:21|INFO|rows Updated           = 0
+2021-01-08 16:05:21|INFO|data formatting errors = 0
+2021-01-08 16:05:21|INFO|gpload succeeded

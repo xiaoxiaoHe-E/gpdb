@@ -263,6 +263,7 @@ def write_config_file(version='1.0.0.1', database='reuse_gptest', user=os.enviro
             f.write("\n    - BEFORE: "+before)
         if after:
             f.write("\n    - AFTER: "+after)
+    f.write("\n")
     f.close()
 
 def psql_run(ifile = None, ofile = None, cmd = None,
@@ -343,15 +344,6 @@ def gpdbAnsFile(fname):
     ext = '.ans'
     return os.path.splitext(fname)[0] + ext
 
-def alterOutFile(file,old_str,new_str):
-    with open(file, "r", encoding="utf-8") as f1,open("%s.bak" % file, "w", encoding="utf-8") as f2:
-        for line in f1:
-            for i in range(len(old_str)):
-                line = re.sub(old_str[i],new_str[i],line)
-            f2.write(line)
-    os.remove(file)
-    os.rename("%s.bak" % file, file)
-
 def isFileEqual( f1, f2, optionalFlags = "", outputPath = "", myinitfile = ""):
     LMYD = os.path.abspath(os.path.dirname(__file__))
     if not os.access( f1, os.R_OK ):
@@ -361,15 +353,6 @@ def isFileEqual( f1, f2, optionalFlags = "", outputPath = "", myinitfile = ""):
     dfile = diffFile( f1, outputPath = outputPath )
     # Gets the suitePath name to add init_file
     suitePath = f1[0:f1.rindex( "/" )]
-
-    pat1 = r'["|//]\d+\.\d+\.\d+\.\d+'  # host ip 
-    newpat1 = lambda x : x[0][0]+'*'
-    pat2 = r'[a-zA-Z0-9/\_-]*/data_file'  # file location
-    newpat2 = 'pathto/data_file'
-    pat3 = r', SSL off$'
-    newpat3 = ''
-    alterOutFile(f2, [pat1,pat2,pat3], [newpat1,newpat2,newpat3])  # some strings in outfile are different each time, such as host and file location
-    # we alter the out file here to make it match the ans file
 
     gphome = os.environ['GPHOME']
     if os.path.exists(suitePath + "/init_file"):
@@ -498,6 +481,20 @@ def check_result(ifile,  optionalFlags = "-U3", outputPath = "", num=None):
         assert f1==AnsFile(mkpath('54tmp.log'))
     return True
 
+
+def ModifyOutFile(file,old_str,new_str):
+    file = 'query'+file+'.out'
+    with open(file, "r", encoding="utf-8") as f1,open("%s.bak" % file, "w", encoding="utf-8") as f2:
+        for line in f1:
+            for i in range(len(old_str)):
+                line = re.sub(old_str[i],new_str[i],line)
+            f2.write(line)
+    os.remove(file)
+    os.rename("%s.bak" % file, file)
+
+Modify_Output_Case = [46,51,57,65]
+
+
 def doTest(num):
     file = mkpath('query%d.diff' % num)
     if os.path.isfile(file):
@@ -505,6 +502,17 @@ def doTest(num):
     modify_sql_file(num)
     file = mkpath('query%d.sql' % num)
     runfile(file)
+
+    if num in Modify_Output_Case:  # some cases need to modify output file to avoid compareing fail with ans file
+        pat1 = r'["|//]\d+\.\d+\.\d+\.\d+'  # host ip 
+        newpat1 = lambda x : x[0][0]+'*'
+        pat2 = r'[a-zA-Z0-9/\_-]*/data_file'  # file location
+        newpat2 = 'pathto/data_file'
+        pat3 = r', SSL off$'
+        newpat3 = ''
+        ModifyOutFile(str(num), [pat1,pat2,pat3], [newpat1,newpat2,newpat3])  # some strings in outfile are different each time, such as host and file location
+        # we modify the out file here to make it match the ans file
+
     check_result(file,num=num)
 
 def write_test_file(num,cmd='',times=2):
