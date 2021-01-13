@@ -164,7 +164,7 @@ def write_config_file(version='1.0.0.1', database='reuse_gptest', user=os.enviro
     table='texttable', mode='insert', update_columns=['n2'], update_condition=None, match_columns=['n1','s1','s2'], staging_table=None, mapping=None, externalSchema=None, preload=True, truncate=False, reuse_tables=True, fast_match=None,
     sql=False, before=None, after=None, error_table=None):
 
-    f = open(config,'w')
+    f = open(config,'w', encoding="utf-8")
     f.write("VERSION: "+version)
     if database:
         f.write("\nDATABASE: "+database)
