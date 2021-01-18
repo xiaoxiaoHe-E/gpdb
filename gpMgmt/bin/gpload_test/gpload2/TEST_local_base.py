@@ -543,8 +543,6 @@ def prepare_before_test(num,cmd='',times=2):
         return wrapped_function
     return prepare_decorator
 
-
-
 def test_00_gpload_formatOpts_setup():
     "0  gpload setup"
     """setup database"""

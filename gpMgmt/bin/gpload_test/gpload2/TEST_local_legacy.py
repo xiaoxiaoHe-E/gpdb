@@ -1,11 +1,8 @@
 from TEST_local_base import *
 
-def test_00_gpload_formatOpts_setup():
-    "0  gpload setup"
-    """setup database"""
-    file = mkpath('setup.sql')
-    runfile(file)
-    check_result(file)
+# clean the database environment before running lecacy cases
+# in case that pytest run legacy in different order when new files are merged and that may lead case fail
+runfile(mkpath('setup.sql'))
 
 @prepare_before_test(num=1)
 def test_01_gpload_formatOpts_delimiter():
