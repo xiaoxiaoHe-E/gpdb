@@ -1,4 +1,5 @@
 from TEST_local_base import *
+# coding=utf-8
 
 @prepare_before_test(num=64, times=1)
 def test_64_gpload_multi_input_file():
