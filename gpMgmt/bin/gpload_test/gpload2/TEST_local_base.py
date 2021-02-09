@@ -12,6 +12,8 @@ import re
 #import yaml
 import pytest
 
+from gppylib.commands.gp import get_coordinatordatadir
+
 try:
     import subprocess32 as subprocess
 except:
@@ -32,7 +34,7 @@ except Exception as e:
     sys.exit(2)
 
 def get_port_from_conf():
-    file = os.environ.get('MASTER_DATA_DIRECTORY')+'/postgresql.conf'
+    file = get_coordinatordatadir()+'/postgresql.conf'
     if os.path.isfile(file):
         with open(file) as f:
             for line in f.xreadlines():
@@ -82,15 +84,15 @@ def run(cmd):
     rc = False if p.wait() else True
     return (rc,ret)
 
-def getPortMasterOnly(host = 'localhost',master_value = None,
+def getPortCoordinatorOnly(host = 'localhost',coordinator_value = None,
                       user = os.environ.get('USER'),gphome = os.environ['GPHOME'],
-                      mdd=os.environ['MASTER_DATA_DIRECTORY'],port = os.environ['PGPORT']):
+                      cdd=get_coordinatordatadir(),port = os.environ['PGPORT']):
 
-    master_pattern = r"Context:\s*-1\s*Value:\s*\d+"
+    coordinator_pattern = r"Context:\s*-1\s*Value:\s*\d+"
     command = "gpconfig -s %s" % ( "port" )
 
-    cmd = "source %s/greenplum_path.sh; export MASTER_DATA_DIRECTORY=%s; export PGPORT=%s; %s" \
-           % (gphome, mdd, port, command)
+    cmd = "source %s/greenplum_path.sh; export COORDINATOR_DATA_DIRECTORY=%s; export PGPORT=%s; %s" \
+           % (gphome, cdd, port, command)
 
     (ok,out) = run(cmd)
     if not ok:
@@ -102,14 +104,14 @@ def getPortMasterOnly(host = 'localhost',master_value = None,
     for line in out:
         out = line.decode().split('\n')
     for line in out:
-        if re.search(master_pattern, line):
-            master_value = int(line.split()[3].strip())
+        if re.search(coordinator_pattern, line):
+            coordinator_value = int(line.split()[3].strip())
 
-    if master_value is None:
+    if coordinator_value is None:
         error_msg = "".join(out)
         raise Exception(error_msg)
 
-    return str(master_value)
+    return str(coordinator_value)
 
 
 def runfile(ifile, flag='', dbname=None, outputPath="", outputFile="",
@@ -157,10 +159,10 @@ if not os.path.exists(d):
     os.mkdir(d)
 
 hostNameAddrs = get_ip(HOST)
-masterPort = getPortMasterOnly()
+coordinatorPort = getPortCoordinatorOnly()
 
-def write_config_file(version='1.0.0.1', database='reuse_gptest', user=os.environ.get('USER'), host=hostNameAddrs, port=masterPort, config='config/config_file', local_host=[hostNameAddrs], file='data/external_file_01.txt', input_port='8081', port_range=None,
-    ssl=None,columns=None, format='text', log_errors=None, error_limit=None, delimiter="'|'", encoding=None, escape=None, null_as=None, fill_missing_fields=None, quote=None, header=None, transform=None, transform_config=None, max_line_length=None, 
+def write_config_file(version='1.0.0.1', database='reuse_gptest', user=os.environ.get('USER'), host=hostNameAddrs, port=coordinatorPort, config='config/config_file', local_host=[hostNameAddrs], file='data/external_file_01.txt', input_port='8081', port_range=None,
+    ssl=None,columns=None, format='text', force_not_null=[], log_errors=None, error_limit=None, delimiter="'|'", encoding=None, escape=None, null_as=None, fill_missing_fields=None, quote=None, header=None, transform=None, transform_config=None, max_line_length=None, 
     table='texttable', mode='insert', update_columns=['n2'], update_condition=None, match_columns=['n1','s1','s2'], staging_table=None, mapping=None, externalSchema=None, preload=True, truncate=False, reuse_tables=True, fast_match=None,
     sql=False, before=None, after=None, error_table=None):
 
@@ -211,6 +213,10 @@ def write_config_file(version='1.0.0.1', database='reuse_gptest', user=os.enviro
         f.write("\n    - ESCAPE: "+escape)
     if null_as:
         f.write("\n    - NULL_AS: "+null_as)
+    if force_not_null:
+        f.write("\n    - FORCE_NOT_NULL:")
+    for c in force_not_null:
+        f.write("\n           - "+c)
     if fill_missing_fields:
         f.write("\n    - FILL_MISSING_FIELDS: "+str(fill_missing_fields))
     if quote:
@@ -409,14 +415,17 @@ def get_table_name():
     except Exception as e:
         errorMessage = str(e)
         print ('could not connect to database: ' + errorMessage)
-    queryString = """SELECT relname
-                     from pg_class
-                     WHERE relname
-                     like 'ext_gpload_reusable%'
-                     OR relname
-                     like 'staging_gpload_reusable%';"""
+    queryString = """SELECT sch.table_schema, cls.relname
+                     FROM pg_class AS cls, information_schema.tables AS sch
+                     WHERE
+                     (cls.relname LIKE 'ext_gpload_reusable%'
+                     OR
+                     relname LIKE 'staging_gpload_reusable%')
+                     AND cls.relname=sch.table_name;"""
     resultList = db.query(queryString.encode('utf-8')).getresult()
+    print(resultList)
     return resultList
+
 
 def drop_tables():
     '''drop external and staging tables'''
@@ -431,14 +440,15 @@ def drop_tables():
 
     tableList = get_table_name()
     for i in tableList:
-        name = i[0]
+        schema = i[0]
+        name = i[1]
         match = re.search('ext_gpload',name)
         if match:
-            queryString = "DROP EXTERNAL TABLE %s;" % name
+            queryString = f'DROP EXTERNAL TABLE "{schema}"."{name}";'
             db.query(queryString.encode('utf-8'))
 
         else:
-            queryString = "DROP TABLE %s;" % name
+            queryString = f'DROP TABLE "{schema}"."{name}";'
             db.query(queryString.encode('utf-8'))
 
 class PSQLError(Exception):
@@ -538,6 +548,24 @@ def prepare_before_test(num,cmd='',times=2):
         def wrapped_function(*args, **kwargs):
             write_test_file(num,cmd,times)
             retval= func(*args, **kwargs)
+            doTest(num)
+            return retval
+        return wrapped_function
+    return prepare_decorator
+
+
+def prepare_before_test_2(num):
+    """ Similar to the prepare_before_test function, but this won't write to
+        the test sql file. This gives more freedom to the test case to handle
+        the test sql file.
+    """
+    def prepare_decorator(func):
+        @wraps(func)
+        def wrapped_function(*args, **kwargs):
+            # Clear the file
+            f = open(mkpath('query%d.sql' % num), 'w')
+            f.close()
+            retval = func(*args, **kwargs)
             doTest(num)
             return retval
         return wrapped_function
