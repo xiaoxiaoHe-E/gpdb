@@ -19,7 +19,7 @@ GPTest.pm:
 .PHONY: installcheck
 installcheck: gpdiff.pl gpstringsubs.pl
 	@cd gpload && ./TEST.py
-	@cd gpload2 && pytest TEST_local_*
+	@cd gpload2 && PYTHONIOENCODING=utf-8 pytest TEST_local_*
 
 clean distclean:
 	rm -f gpdiff.pl atmsort.pm explain.pm GPTest.pm gpstringsubs.pl
