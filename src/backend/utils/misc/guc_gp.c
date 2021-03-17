@@ -258,6 +258,7 @@ bool		gp_log_dynamic_partition_pruning = false;
 bool		gp_cte_sharing = false;
 bool		gp_enable_relsize_collection = false;
 bool		gp_recursive_cte = true;
+bool		gp_eager_two_phase_agg = false;
 
 /* Optimizer related gucs */
 bool		optimizer;
@@ -1470,7 +1471,7 @@ struct config_bool ConfigureNamesBool_gp[] =
 			NULL
 		},
 		&log_autostats,
-		true,
+		false,
 		NULL, NULL, NULL
 	},
 	{
@@ -1742,6 +1743,16 @@ struct config_bool ConfigureNamesBool_gp[] =
 		},
 		&gp_recursive_cte,
 		true, NULL, NULL
+	},
+
+	{
+		{"gp_eager_two_phase_agg", PGC_USERSET, QUERY_TUNING_METHOD,
+			gettext_noop("Eager two stage agg."),
+			NULL,
+			GUC_NO_SHOW_ALL | GUC_NOT_IN_SAMPLE
+		},
+		&gp_eager_two_phase_agg,
+		false, NULL, NULL
 	},
 
 	{
@@ -2608,7 +2619,7 @@ struct config_bool ConfigureNamesBool_gp[] =
 			GUC_NO_SHOW_ALL | GUC_NOT_IN_SAMPLE
 		},
 		&optimizer_array_constraints,
-		false,
+		true,
 		NULL, NULL, NULL
 	},
 
@@ -2805,12 +2816,12 @@ struct config_int ConfigureNamesInt_gp[] =
 	},
 
 	{
-		{"write_to_gpfdist_timeout", PGC_USERSET, EXTERNAL_TABLES,
+		{"gpfdist_retry_timeout", PGC_USERSET, EXTERNAL_TABLES,
 			gettext_noop("Timeout (in seconds) for writing data to gpfdist server."),
 			gettext_noop("Default value is 300."),
 			GUC_UNIT_S | GUC_NOT_IN_SAMPLE
 		},
-		&write_to_gpfdist_timeout,
+		&gpfdist_retry_timeout,
 		300, 1, 7200,
 		NULL, NULL, NULL
 	},
@@ -3039,6 +3050,16 @@ struct config_int ConfigureNamesInt_gp[] =
 		},
 		&xid_warn_limit,
 		500000000, 10000000, INT_MAX,
+		NULL, NULL, NULL
+	},
+	{
+		{"gp_gxid_prefetch_num", PGC_POSTMASTER, WAL,
+			gettext_noop("how many gxid is prefetched in each bumping batch."),
+			NULL,
+			GUC_NOT_IN_SAMPLE | GUC_NO_SHOW_ALL
+		},
+		&gp_gxid_prefetch_num,
+		8192, 512, INT_MAX,
 		NULL, NULL, NULL
 	},
 	{
@@ -4830,7 +4851,7 @@ lookup_autostats_mode_by_value(GpAutoStatsModeValue val)
 static bool
 check_gp_workfile_compression(bool *newval, void **extra, GucSource source)
 {
-#ifndef HAVE_LIBZSTD
+#ifndef USE_ZSTD
 	if (*newval)
 	{
 		GUC_check_errmsg("workfile compresssion is not supported by this build");
