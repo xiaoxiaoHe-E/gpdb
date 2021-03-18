@@ -238,7 +238,7 @@ CConstraint::PcnstrFromScalarExpr(
 
 		if (nullptr != pcnstr)
 		{
-			AddColumnToEquivClasses(mp, colref, ppdrgpcrs);
+			AddColumnToEquivClasses(mp, colref, *ppdrgpcrs);
 		}
 		return pcnstr;
 	}
@@ -350,12 +350,12 @@ CConstraint::PcnstrConjDisj(CMemoryPool *mp, CConstraintArray *pdrgpcnstr,
 //---------------------------------------------------------------------------
 void
 CConstraint::AddColumnToEquivClasses(CMemoryPool *mp, const CColRef *colref,
-									 CColRefSetArray **ppdrgpcrs)
+									 CColRefSetArray *pdrgpcrs)
 {
-	const ULONG length = (*ppdrgpcrs)->Size();
+	const ULONG length = pdrgpcrs->Size();
 	for (ULONG ul = 0; ul < length; ul++)
 	{
-		CColRefSet *pcrs = (**ppdrgpcrs)[ul];
+		CColRefSet *pcrs = (*pdrgpcrs)[ul];
 		if (pcrs->FMember(colref))
 		{
 			return;
@@ -365,7 +365,7 @@ CConstraint::AddColumnToEquivClasses(CMemoryPool *mp, const CColRef *colref,
 	CColRefSet *pcrsNew = GPOS_NEW(mp) CColRefSet(mp);
 	pcrsNew->Include(colref);
 
-	(*ppdrgpcrs)->Append(pcrsNew);
+	pdrgpcrs->Append(pcrsNew);
 }
 
 //---------------------------------------------------------------------------
@@ -857,10 +857,8 @@ CConstraint::PdrgpcnstrDeduplicate(CMemoryPool *mp,
 //---------------------------------------------------------------------------
 ColRefToConstraintArrayMap *
 CConstraint::Phmcolconstr(CMemoryPool *mp, CColRefSet *pcrs,
-						  CConstraintArray *pdrgpcnstr) const
+						  CConstraintArray *pdrgpcnstr)
 {
-	GPOS_ASSERT(nullptr != m_pcrsUsed);
-
 	ColRefToConstraintArrayMap *phmcolconstr =
 		GPOS_NEW(mp) ColRefToConstraintArrayMap(mp);
 

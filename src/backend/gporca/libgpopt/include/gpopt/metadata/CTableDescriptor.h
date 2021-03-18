@@ -84,12 +84,6 @@ private:
 	// id of user the table needs to be accessed with
 	ULONG m_execute_as_user_id;
 
-	// if true, it means this descriptor has partial indexes
-	BOOL m_fHasPartialIndexes;
-
-	// returns true if this table descriptor has partial indexes
-	BOOL FDescriptorWithPartialIndexes();
-
 	// lockmode from the parser
 	INT m_lockmode;
 
@@ -221,20 +215,13 @@ public:
 
 	// helper function for finding the index of a column descriptor in
 	// an array of column descriptors
-	ULONG UlPos(const CColumnDescriptor *,
-				const CColumnDescriptorArray *) const;
+	static ULONG UlPos(const CColumnDescriptor *,
+					   const CColumnDescriptorArray *);
 
 	IOstream &OsPrint(IOstream &os) const;
 
 	// returns number of indices
 	ULONG IndexCount();
-
-	// true iff this table has partial indexes
-	BOOL
-	HasPartialIndexes() const
-	{
-		return m_fHasPartialIndexes;
-	}
 
 	BOOL
 	IsAORowOrColTable() const

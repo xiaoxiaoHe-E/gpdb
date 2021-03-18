@@ -34,7 +34,6 @@ gDatabaseDirectories = [
     "pg_multixact",
     "pg_distributedxidmap",
     "pg_distributedlog",
-    "pg_utilitymodedtmredo",
     "base",
     "pg_tblspc",
     "pg_stat_tmp"
@@ -697,7 +696,7 @@ class GpMirrorListToBuild:
         return running_segments
 
     def dereference_remote_symlink(self, datadir, host):
-        cmdStr = """python -c 'import os; print os.path.realpath("%s")'""" % datadir
+        cmdStr = """python -c 'import os; print(os.path.realpath("%s"))'""" % datadir
         cmd = base.Command('dereference a symlink on a remote host', cmdStr=cmdStr, ctxt=base.REMOTE, remoteHost=host)
         cmd.run()
         results = cmd.get_results()

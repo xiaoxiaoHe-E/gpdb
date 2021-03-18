@@ -38,8 +38,8 @@ private:
 	CColRefSet *m_pcrsMinimalGrpCols;
 
 	// construct order spec on grouping column so that it covers required order spec
-	COrderSpec *PosCovering(CMemoryPool *mp, COrderSpec *posRequired,
-							CColRefArray *pdrgpcrGrp) const;
+	static COrderSpec *PosCovering(CMemoryPool *mp, COrderSpec *posRequired,
+								   CColRefArray *pdrgpcrGrp);
 
 protected:
 	// compute required sort columns of the n-th child
@@ -130,7 +130,7 @@ public:
 		GPOS_ASSERT(EopPhysicalStreamAgg == pop->Eopid() ||
 					EopPhysicalStreamAggDeduplicate == pop->Eopid());
 
-		return reinterpret_cast<CPhysicalStreamAgg *>(pop);
+		return dynamic_cast<CPhysicalStreamAgg *>(pop);
 	}
 
 };	// class CPhysicalStreamAgg

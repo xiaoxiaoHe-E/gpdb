@@ -2812,7 +2812,6 @@ CTestUtils::EresTranslate(CMemoryPool *mp, const CHAR *szQueryFileName,
 	gpopt::CExpression *pexprPlan = eng.PexprExtractPlan();
 	GPOS_ASSERT(nullptr != pexprPlan);
 
-	(void) pexprPlan->PrppCompute(mp, pqc->Prpp());
 	pexprPlan->OsPrint(oss);
 
 	// translate plan back to DXL
@@ -3804,13 +3803,14 @@ CTestUtils::CreateGenericDatum(CMemoryPool *mp, CMDAccessor *md_accessor,
 		CDXLUtils::DecodeByteArrayFromString(mp, pstrEncodedValue, &ulbaSize);
 
 	CDXLDatumGeneric *dxl_datum = nullptr;
-	if (CMDTypeGenericGPDB::IsTimeRelatedType(mdid_type))
+	if (CMDTypeGenericGPDB::IsTimeRelatedTypeMappableToDouble(mdid_type))
 	{
 		dxl_datum = GPOS_NEW(mp) CDXLDatumStatsDoubleMappable(
 			mp, mdid_type, default_type_modifier, false /*is_const_null*/, data,
 			ulbaSize, CDouble(value));
 	}
-	else if (pmdtype->IsTextRelated())
+	else if (pmdtype->IsTextRelated() ||
+			 CMDTypeGenericGPDB::IsTimeRelatedTypeMappableToLint(mdid_type))
 	{
 		dxl_datum = GPOS_NEW(mp) CDXLDatumStatsLintMappable(
 			mp, mdid_type, default_type_modifier, false /*is_const_null*/, data,
@@ -4165,7 +4165,7 @@ CTestUtils::EresUnittest_RunTestsWithoutAdditionalTraceFlags(
 // Create Equivalence Class based on the breakpoints
 CColRefSetArray *
 CTestUtils::createEquivalenceClasses(CMemoryPool *mp, CColRefSet *pcrs,
-									 INT setBoundary[])
+									 const INT setBoundary[])
 {
 	INT i = 0;
 	ULONG bpIndex = 0;

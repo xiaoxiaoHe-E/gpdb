@@ -69,20 +69,6 @@ typedef CHashMapIter<ULONG, CExpressionArray, gpos::HashValue<ULONG>,
 //---------------------------------------------------------------------------
 class CTranslatorDXLToExpr
 {
-	// shorthand for functions for translating DXL operator nodes into expression trees
-	typedef CExpression *(CTranslatorDXLToExpr::*PfPexpr)(
-		const CDXLNode *dxlnode);
-
-	// pair of DXL operator type and the corresponding translator
-	struct STranslatorMapping
-	{
-		// type
-		Edxlopid edxlopid;
-
-		// translator function pointer
-		PfPexpr pf;
-	};
-
 private:
 	// memory pool
 	CMemoryPool *m_mp;
@@ -109,9 +95,6 @@ private:
 
 	// id of CTE that we are currently processing (gpos::ulong_max for main query)
 	ULONG m_ulCTEId;
-
-	// DXL operator translators indexed by the operator id
-	PfPexpr m_rgpfTranslators[EdxlopSentinel];
 
 	// a copy of the pointer to column factory, obtained at construction time
 	CColumnFactory *m_pcf;
@@ -175,7 +158,7 @@ private:
 					   INT type_modifier, BOOL fStoreMapping, ULONG colid);
 
 	// check if we currently support the casting of such column types
-	BOOL FCastingUnknownType(IMDId *pmdidSource, IMDId *mdid_dest);
+	static BOOL FCastingUnknownType(IMDId *pmdidSource, IMDId *mdid_dest);
 
 	// translate a DXL logical get into an expr logical get
 	CExpression *PexprLogicalGet(const CDXLNode *pdxlnLgGet);
@@ -231,7 +214,7 @@ private:
 		const CDXLNode *pdxlnSubqueryAny);
 
 	// translate a DXL scalar into an expr scalar
-	CExpression *PexprScalar(const CDXLNode *pdxlnCond);
+	CExpression *PexprScalar(const CDXLNode *dxlnode);
 
 	// translate a DXL scalar if stmt into a scalar if
 	CExpression *PexprScalarIf(const CDXLNode *pdxlnIf);
@@ -273,17 +256,17 @@ private:
 	CExpression *PexprWindowFunc(const CDXLNode *pdxlnWindowRef);
 
 	// translate the DXL representation of the window stage
-	CScalarWindowFunc::EWinStage Ews(EdxlWinStage edxlws) const;
+	static CScalarWindowFunc::EWinStage Ews(EdxlWinStage edxlws);
 
 	// translate the DXL representation of window frame into its respective representation in the optimizer
 	CWindowFrame *Pwf(const CDXLWindowFrame *window_frame);
 
 	// translate the DXL representation of window frame boundary into its respective representation in the optimizer
-	CWindowFrame::EFrameBoundary Efb(EdxlFrameBoundary frame_boundary) const;
+	static CWindowFrame::EFrameBoundary Efb(EdxlFrameBoundary frame_boundary);
 
 	// translate the DXL representation of window frame exclusion strategy into its respective representation in the optimizer
-	CWindowFrame::EFrameExclusionStrategy Efes(
-		EdxlFrameExclusionStrategy edxlfeb) const;
+	static CWindowFrame::EFrameExclusionStrategy Efes(
+		EdxlFrameExclusionStrategy edxlfeb);
 
 	// translate a DXL scalar array
 	CExpression *PexprArray(const CDXLNode *dxlnode);
@@ -295,7 +278,7 @@ private:
 	CExpression *PexprArrayRefIndexList(const CDXLNode *dxlnode);
 
 	// translate the arrayref index list type
-	CScalarArrayRefIndexList::EIndexListType Eilt(
+	static CScalarArrayRefIndexList::EIndexListType Eilt(
 		const CDXLScalarArrayRefIndexList::EIndexListBound eilb);
 
 	// translate a DXL scalar array compare
@@ -346,12 +329,9 @@ private:
 	CExpression *Pexpr(const CDXLNode *dxlnode);
 
 	// update table descriptor's distribution columns from the MD cache object
-	void AddDistributionColumns(CTableDescriptor *ptabdesc,
-								const IMDRelation *pmdrel,
-								IntToUlongMap *phmiulAttnoColMapping);
-
-	// initialize index of operator translators
-	void InitTranslators();
+	static void AddDistributionColumns(CTableDescriptor *ptabdesc,
+									   const IMDRelation *pmdrel,
+									   IntToUlongMap *phmiulAttnoColMapping);
 
 	// main translation routine for DXL tree -> Expr tree
 	CExpression *Pexpr(const CDXLNode *dxlnode,

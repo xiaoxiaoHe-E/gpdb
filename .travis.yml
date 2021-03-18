@@ -12,17 +12,13 @@ addons:
     apt:
         config:
             retries: true
-        sources: &common_sources
-            - ubuntu-toolchain-r-test
         packages: &common_packages
-            - gcc-8
             - libxml2
             - libxml2-dev
             - libxerces-c-dev
             - libevent-dev
             - libperl-dev
             - libuv1-dev
-            - g++-8
             - python3
             - python3-dev
             - python-dev
@@ -39,36 +35,27 @@ matrix:
     fast_finish: true
     include:
         # OS and Compiler variations
+        # 
+        # NOTE: Some of the docker containers set LC_ALL and LC_CTYPE to 
+        # values that are not specified on the system's locale as found 
+        # via "locale -a". This causes gpinitsystem and possibly initdb 
+        # to fail. Set these environment variables to the system's locale.
         # ----------------------------------------------------------------
         #
-        # Ubuntu Bionic, gcc 8
+        # Ubuntu Bionic, gcc 7
         - os: linux
           dist: bionic
           compiler: gcc
           env:
               - T=debug C=""
-              - OVERRIDE_CC="CC=gcc-8" OVERRIDE_CXX="CXX=g++-8"
-          addons:
-              apt:
-                  sources:
-                      - *common_sources
-                  packages:
-                      - *common_packages
-        # Ubuntu Xenial, clang 7
+              - LC_CTYPE="en_US.utf8" LC_ALL="en_US.utf8" # see NOTE above
+        # Ubuntu Bionic, clang 7
         - os: linux
-          dist: xenial
+          dist: bionic
           compiler: clang
           env:
               - T=debug C=""
-              - OVERRIDE_CC="CC=clang-7" OVERRIDE_CXX="CXX=clang++-7"
-          addons:
-              apt:
-                  sources:
-                      - *common_sources
-                      - llvm-toolchain-xenial-7
-                  packages:
-                      - *common_packages
-                      - clang-7
+              - LC_CTYPE="en_US.utf8" LC_ALL="en_US.utf8" # see NOTE above
         # macOS, XCode11
         - os: osx
           compiler: clang
@@ -89,12 +76,8 @@ matrix:
           compiler: gcc
           env:
               - T=debug C="--without-zlib --without-libbz2 --without-zstd --without-quicklz"
-              - OVERRIDE_CC="CC=gcc-8" OVERRIDE_CXX="CXX=g++-8"
-          addons:
-              apt:
-                  sources: *common_sources
-                  packages: *common_packages
-        # ARM64, Ubuntu Bionic, gcc 8, unit tests
+              - LC_CTYPE="en_US.utf8" LC_ALL="en_US.utf8" # see NOTE above
+        # ARM64, Ubuntu Bionic, gcc 7, unit tests
         # For arm64, disable orca to avoid job timeouts
         - os: linux
           arch: arm64
@@ -102,32 +85,21 @@ matrix:
           compiler: gcc
           env:
               - tests=unit T=debug C="--disable-orca"
-              - OVERRIDE_CC="CC=gcc-8" OVERRIDE_CXX="CXX=g++-8"
-          addons:
-              apt:
-                  sources: *common_sources
-                  packages: *common_packages
-        # ARM64, Ubuntu Bionic, gcc 8, installcheck
+              - LC_CTYPE="en_US.utf8" LC_ALL="en_US.utf8" # see NOTE above
+        # ARM64, Ubuntu Bionic, gcc 7, installcheck
         - os: linux
           arch: arm64
           dist: bionic
           compiler: gcc
           env:
               - tests=installcheck T=debug C="--disable-orca"
-              - OVERRIDE_CC="CC=gcc-8" OVERRIDE_CXX="CXX=g++-8"
-          addons:
-              apt:
-                  sources: *common_sources
-                  packages: *common_packages
+              - LC_CTYPE="en_US.utf8" LC_ALL="en_US.utf8" # see NOTE above
 
         - name: clang-tidy
           os: linux
           dist: focal
           addons:
             apt:
-              sources:
-                - sourceline: 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-11 main'
-                  key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
               packages:
                 - ninja-build
                 - clang-11

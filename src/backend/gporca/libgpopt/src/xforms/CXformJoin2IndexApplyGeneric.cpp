@@ -28,9 +28,8 @@ using namespace gpopt;
 BOOL
 CXformJoin2IndexApplyGeneric::FCanLeftOuterIndexApply(
 	CMemoryPool *mp, CExpression *pexprInner, CExpression *pexprScalar,
-	CTableDescriptor *ptabDesc, const CColRefSet *pcrsDist) const
+	CTableDescriptor *ptabDesc, const CColRefSet *pcrsDist)
 {
-	GPOS_ASSERT(m_fOuterJoin);
 	IMDRelation::Ereldistrpolicy ereldist = ptabDesc->GetRelDistribution();
 
 	if (ereldist == IMDRelation::EreldistrRandom)
@@ -338,7 +337,7 @@ CXformJoin2IndexApplyGeneric::Transform(CXformContext *pxfctxt,
 	CreateHomogeneousIndexApplyAlternatives(
 		mp, pexpr->Pop(), pexprOuter, pexprGet, pexprAllPredicates, pexprScalar,
 		nodesToInsertAboveIndexGet, endOfNodesToInsertAboveIndexGet,
-		ptabdescInner, popDynamicGet, pxfres,
+		ptabdescInner, pxfres,
 		(m_generateBitmapPlans ? IMDIndex::EmdindBitmap
 							   : IMDIndex::EmdindBtree));
 

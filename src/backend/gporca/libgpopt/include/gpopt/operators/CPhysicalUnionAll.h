@@ -21,10 +21,6 @@ private:
 	// input column array
 	CColRef2dArray *const m_pdrgpdrgpcrInput;
 
-	// if this union is needed for partial indexes then store the scan
-	// id, otherwise this will be gpos::ulong_max
-	const ULONG m_ulScanIdPartialIndex;
-
 	// set representation of input columns
 	CColRefSetArray *m_pdrgpcrsInput;
 
@@ -51,16 +47,16 @@ private:
 
 	// derive strict random distribution spec if all the children of the parallel union all
 	// node derive strict random; derive null spec otherwise
-	CDistributionSpecRandom *PdsStrictRandomParallelUnionAllChildren(
-		CMemoryPool *mp, CExpressionHandle &expr_handle) const;
+	static CDistributionSpecRandom *PdsStrictRandomParallelUnionAllChildren(
+		CMemoryPool *mp, CExpressionHandle &expr_handle);
 
 	// compute output hashed distribution matching the outer child's hashed distribution
 	CDistributionSpecHashed *PdsMatching(
 		CMemoryPool *mp, const ULongPtrArray *pdrgpulOuter) const;
 
 	// derive output distribution based on child distribution
-	CDistributionSpec *PdsDeriveFromChildren(CMemoryPool *mp,
-											 CExpressionHandle &exprhdl) const;
+	static CDistributionSpec *PdsDeriveFromChildren(CMemoryPool *mp,
+													CExpressionHandle &exprhdl);
 
 protected:
 	// compute required hashed distribution of the n-th child
@@ -70,8 +66,7 @@ protected:
 
 public:
 	CPhysicalUnionAll(CMemoryPool *mp, CColRefArray *pdrgpcrOutput,
-					  CColRef2dArray *pdrgpdrgpcrInput,
-					  ULONG ulScanIdPartialIndex);
+					  CColRef2dArray *pdrgpdrgpcrInput);
 
 	~CPhysicalUnionAll() override;
 
@@ -91,13 +86,6 @@ public:
 
 	// accessor of input column array
 	CColRef2dArray *PdrgpdrgpcrInput() const;
-
-	// if this unionall is needed for partial indexes then return the scan
-	// id, otherwise return gpos::ulong_max
-	ULONG UlScanIdPartialIndex() const;
-
-	// is this unionall needed for a partial index
-	BOOL IsPartialIndex() const;
 
 	// return true if operator passes through stats obtained from children,
 	// this is used when computing stats during costing

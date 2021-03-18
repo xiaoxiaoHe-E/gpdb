@@ -703,7 +703,8 @@ CHistogram::MakeJoinHistogramNormalize(CStatsPred::EStatsCmpType stats_cmp_type,
 			rows_other * other_histogram->GetNullFreq();
 		CDouble expected_num_rows_INDF =
 			expected_num_rows_eq_join + (num_null_rows * num_null_rows_other);
-		*scale_factor = cartesian_product_num_rows / expected_num_rows_INDF;
+		*scale_factor = std::max(
+			CDouble(1.0), cartesian_product_num_rows / expected_num_rows_INDF);
 	}
 
 	// bound scale factor by cross product
@@ -1756,8 +1757,7 @@ CHistogram::CombineBuckets(CMemoryPool *mp, CBucketArray *buckets,
 
 // cleanup residual buckets
 void
-CHistogram::CleanupResidualBucket(CBucket *bucket,
-								  BOOL bucket_is_residual) const
+CHistogram::CleanupResidualBucket(CBucket *bucket, BOOL bucket_is_residual)
 {
 	if (nullptr != bucket && bucket_is_residual)
 	{
@@ -1770,7 +1770,7 @@ CHistogram::CleanupResidualBucket(CBucket *bucket,
 CBucket *
 CHistogram::GetNextBucket(const CHistogram *histogram, CBucket *new_bucket,
 						  BOOL *result_bucket_is_residual,
-						  ULONG *current_bucket_index) const
+						  ULONG *current_bucket_index)
 {
 	GPOS_ASSERT(nullptr != histogram);
 	if (nullptr != new_bucket)

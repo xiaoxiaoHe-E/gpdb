@@ -174,6 +174,13 @@ Feature: gprecoverseg tests
       And the status of the primary on content 0 should be "u"
       And the status of the primary on content 1 should be "d"
 
+      # Rebalance all possible segments and skip unreachable segment pairs.
+      When the user runs "gprecoverseg -ar"
+      Then gprecoverseg should return a return code of 0
+      And gprecoverseg should print "Not rebalancing primary segment dbid \d with its mirror dbid \d because one is either down, unreachable, or not synchronized" to stdout
+      And content 0 is balanced
+      And content 1 is unbalanced
+
       And the user runs psql with "-c 'DROP TABLE foo'" against database "postgres"
       And the cluster is returned to a good state
 
@@ -215,7 +222,6 @@ Feature: gprecoverseg tests
         And the backup pid file is deleted on "primary" segment
         And the background pid is killed on "primary" segment
 
-    @skip_fixme_ubuntu18.04
     @concourse_cluster
     Scenario: gprecoverseg full recovery testing
         Given the database is running
@@ -231,7 +237,6 @@ Feature: gprecoverseg tests
         And all the segments are running
         And the segments are synchronized
 
-    @skip_fixme_ubuntu18.04
     @concourse_cluster
     Scenario: gprecoverseg with -i and -o option
         Given the database is running
@@ -250,7 +255,6 @@ Feature: gprecoverseg tests
         And all the segments are running
         And the segments are synchronized
 
-    @skip_fixme_ubuntu18.04
     @concourse_cluster
     Scenario: gprecoverseg should not throw exception for empty input file
         Given the database is running
@@ -268,7 +272,6 @@ Feature: gprecoverseg tests
         Then all the segments are running
         And the segments are synchronized
 
-    @skip_fixme_ubuntu18.04
     @concourse_cluster
     Scenario: gprecoverseg should use the same setting for data_checksums for a full recovery
         Given the database is running

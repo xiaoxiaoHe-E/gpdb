@@ -94,7 +94,7 @@ private:
 	// add column as a new equivalence class, if it is not already in one of the
 	// existing equivalence classes
 	static void AddColumnToEquivClasses(CMemoryPool *mp, const CColRef *colref,
-										CColRefSetArray **ppdrgpcrs);
+										CColRefSetArray *pdrgpcrs);
 
 	// create constraint from scalar comparison
 	static CConstraint *PcnstrFromScalarCmp(CMemoryPool *mp, CExpression *pexpr,
@@ -143,8 +143,8 @@ protected:
 												   EConstraintType ect);
 
 	// mapping between columns and arrays of constraints
-	ColRefToConstraintArrayMap *Phmcolconstr(
-		CMemoryPool *mp, CColRefSet *pcrs, CConstraintArray *pdrgpcnstr) const;
+	static ColRefToConstraintArrayMap *Phmcolconstr(
+		CMemoryPool *mp, CColRefSet *pcrs, CConstraintArray *pdrgpcnstr);
 
 	// return a copy of the conjunction/disjunction constraint for a different column
 	static CConstraint *PcnstrConjDisjRemapForColumn(

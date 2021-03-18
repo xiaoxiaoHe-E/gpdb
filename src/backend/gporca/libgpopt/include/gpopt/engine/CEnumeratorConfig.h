@@ -250,15 +250,15 @@ public:
 	}
 
 	// is enumeration enabled?
-	BOOL
-	FEnumerate() const
+	static BOOL
+	FEnumerate()
 	{
 		return GPOS_FTRACE(EopttraceEnumeratePlans);
 	}
 
 	// is sampling enabled?
-	BOOL
-	FSample() const
+	static BOOL
+	FSample()
 	{
 		return GPOS_FTRACE(EopttraceSamplePlans);
 	}
@@ -320,9 +320,9 @@ public:
 	void PrintPlanSample() const;
 
 	// compute Gaussian kernel density
-	static void GussianKernelDensity(DOUBLE *pdObervationX,
-									 DOUBLE *pdObervationY,
-									 ULONG ulObservations, DOUBLE *pdX,
+	static void GussianKernelDensity(const DOUBLE *pdObervationX,
+									 const DOUBLE *pdObervationY,
+									 ULONG ulObservations, const DOUBLE *pdX,
 									 DOUBLE *pdY, ULONG size);
 
 	// generate default enumerator configurations

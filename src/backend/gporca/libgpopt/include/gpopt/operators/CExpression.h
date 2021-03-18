@@ -119,9 +119,6 @@ private:
 	// copy group properties and stats to expression
 	void CopyGroupPropsAndStats(IStatistics *input_stats);
 
-	// decorate expression tree with required plan properties
-	CReqdPropPlan *PrppDecorate(CMemoryPool *mp, CReqdPropPlan *prppInput);
-
 public:
 	CExpression(const CExpression &) = delete;
 
@@ -147,8 +144,8 @@ public:
 
 	// ctor for n-ary expression with origin group expression
 	CExpression(CMemoryPool *mp, COperator *pop, CGroupExpression *pgexpr,
-				CExpressionArray *pdrgpexpr, IStatistics *input_stats,
-				CCost cost = GPOPT_INVALID_COST);
+				CExpressionArray *pdrgpexpr, CReqdPropPlan *prpp,
+				IStatistics *input_stats, CCost cost = GPOPT_INVALID_COST);
 
 	// dtor
 	~CExpression() override;
@@ -238,9 +235,6 @@ public:
 	// reset expression stats
 	void ResetStats();
 
-	// compute required plan properties of all expression nodes
-	CReqdPropPlan *PrppCompute(CMemoryPool *mp, CReqdPropPlan *prppInput);
-
 	// check for outer references
 	BOOL HasOuterRefs();
 
@@ -303,7 +297,6 @@ public:
 	CFunctionProp *DeriveFunctionProperties();
 	CFunctionalDependencyArray *DeriveFunctionalDependencies();
 	CPartInfo *DerivePartitionInfo();
-	BOOL DeriveHasPartialIndexes();
 	CTableDescriptor *DeriveTableDescriptor();
 
 	// Scalar property accessors - derived as needed
