@@ -2496,7 +2496,7 @@ class gpload:
         try:
             self.db.query(sql.encode('utf-8'))
         except Exception as e:
-            self.log(self.ERROR, 'could not run SQL "%s": %s' % (sql, unicode(e)))
+            self.log(self.ERROR, 'could not run SQL "%s": %s' % (sql, str(e)))
 
         # set up to drop the external table at the end of operation, unless user
         # specified the 'reuse_tables' option, in which case we don't drop

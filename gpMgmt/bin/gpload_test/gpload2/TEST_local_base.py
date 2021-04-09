@@ -502,7 +502,17 @@ def ModifyOutFile(file,old_str,new_str):
     os.remove(file)
     os.rename("%s.bak" % file, file)
 
-Modify_Output_Case = [46,51,57,65]
+def HandleSpecial76(old_str,new_str):
+    file = 'query76.out'
+    with open(file, "r", encoding="utf-8") as f1,open("%s.bak" % file, "w", encoding="utf-8") as f2:
+        for line in f1:
+            for i in range(len(old_str)):
+                line = re.sub(old_str[i],new_str[i],line)
+            f2.write(line)
+    os.remove(file)
+    os.rename("%s.bak" % file, file)
+
+Modify_Output_Case = [46,51,57,65,402]
 
 
 def doTest(num):
@@ -520,8 +530,19 @@ def doTest(num):
         newpat2 = 'pathto/data_file'
         pat3 = r', SSL off$'
         newpat3 = ''
-        ModifyOutFile(str(num), [pat1,pat2,pat3], [newpat1,newpat2,newpat3])  # some strings in outfile are different each time, such as host and file location
+        ModifyOutFile(str(num),
+            [pat1,pat2,pat3], [newpat1,newpat2,newpat3])
+        # some strings in outfile are different each time, such as host and file location
         # we modify the out file here to make it match the ans file
+
+    if num ==76:
+        pat4 = r'ext_gpload_reusable_[a-zA-Z0-9_]*'
+        newpat4 = 'ext_gpload_reusable'
+        pat5 = r'staging_gpload_reusable_[a-zA-Z0-9_]*'
+        newpat5 = 'staging_gpload_reusable'
+        pat6 = r'LINE 1: ...[a-zA-Z0-9_]*\(列1'
+        newpat6 = 'LINE1: ...(列1'
+        HandleSpecial76([pat4,pat5,pat6], [newpat4,newpat5,newpat6])
 
     check_result(file,num=num)
 
