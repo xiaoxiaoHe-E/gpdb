@@ -1155,6 +1155,7 @@ class gpload:
         self.error_table = False
         self.gpdb_version = ""
         self.options.max_retries = 0
+        self.support_cusfmt = 0
         seenv = False
         seenq = False
 
@@ -1905,15 +1906,30 @@ class gpload:
             self.log(self.DEBUG, '%s: %s'%(name,typ))
 
 
-    def test_custom_formatter(self):
-        # Test if 'text_in' custom formatter can be used
+    def check_enable_custom_format(self):
+        # Test custom format guc
+        self.enable_custom_format = 0;
+        if self.support_cusfmt:
+            queryString = """show dataflow.prefer_custom_text;"""
+            resultList = self.db.query(queryString.encode('utf-8')).getresult()
+            val = resultList[0][0]
+            if val == 'on':
+                self.enable_custom_format = 1
+
+    def check_custom_formatter(self):
+        # Check if 'text_in' custom formatter can be used
         self.support_cusfmt = 0
         try:
-            queryString = """CREATE OR REPLACE FUNCTION text_in() RETURNS record
-			AS '$libdir/gpfmt_gpss.so', 'text_import'
-                      LANGUAGE C STABLE; """
+            # make sure dataflow extension has been created.
+            queryString = """CREATE EXTENSION IF NOT EXISTS dataflow;"""
             self.db.query(queryString.encode('utf-8'))
-        
+            # load gpss.so to enable "dataflow.prefer_custom_text" guc.
+            queryString = """SELECT dataflow_version();"""
+            self.db.query(queryString.encode('utf-8'))
+            # show "dataflow.prefer_custom_text" guc, this guc only exists in gpdb6.
+            queryString = """SHOW dataflow.prefer_custom_text;"""
+            self.db.query(queryString.encode('utf-8'))
+
             queryString = """SELECT c.oid FROM pg_catalog.pg_proc c 
                                LEFT JOIN pg_catalog.pg_namespace n
                                ON n.oid = c.pronamespace
@@ -1921,8 +1937,9 @@ class gpload:
             resultList = self.db.query(queryString.encode('utf-8')).getresult()
             if len(resultList) > 0:
                 self.support_cusfmt = 1
+
         except Exception, e:
-            self.log(self.ERROR, 'could not run SQL "%s": %s' % (queryString, unicode(e)))
+            self.log(self.DEBUG, 'could not run SQL "%s": %s' % (queryString, unicode(e)))
 
     def read_table_metadata(self):
         # KAS Note to self. If schema is specified, then probably should use PostgreSQL rules for defining it.
@@ -2319,12 +2336,16 @@ class gpload:
         self.custom_contan_pre = ""
         self.reuse_tbl_Opts = ""
         self.use_customfmt = 0
-        if self.support_cusfmt and formatType == 'text':
-            self.formatOpts = "formatter='text_in'"
-            self.reuse_tbl_Opts = "formatter 'text_in' "
-            self.custom_contan = "="
-            self.custom_contan_pre = ", "
-            self.use_customfmt = 1
+        
+        if formatType == 'text':
+            if self.enable_custom_format:
+                self.log(self.INFO, "Use gpdb5 text format to create external table")
+                self.formatOpts = "formatter='text_in'"
+                self.reuse_tbl_Opts = "formatter 'text_in' "
+                self.custom_contan = "="
+                self.custom_contan_pre = ", "
+                self.use_customfmt = 1
+
         self.get_external_table_formatOpts('delimiter')
 
         nullas = self.getconfig('gpload:input:null_as', unicode, False)
@@ -2894,6 +2915,7 @@ class gpload:
                     self.log(self.ERROR, 'could not execute SQL in sql:before "%s": %s' %
                              (before, str(e)))
 
+        self.check_enable_custom_format()
 
         if method=='insert':
             self.do_method_insert()
@@ -2948,7 +2970,7 @@ class gpload:
         start = time.time()
         self.read_config()
         self.setup_connection()
-        self.test_custom_formatter()
+        self.check_custom_formatter()
         self.read_table_metadata()
         self.read_columns()
         self.read_mapping()

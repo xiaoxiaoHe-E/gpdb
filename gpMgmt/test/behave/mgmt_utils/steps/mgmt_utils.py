@@ -1393,17 +1393,22 @@ def impl(context, filename, output):
     print contents
     check_stdout_msg(context, output)
 
-@then('verify that the last line of the file "{filename}" in the master data directory contains the string "{output}" escaped')
-def impl(context, filename, output):
-    find_string_in_master_data_directory(context, filename, output, True)
+@then('verify that the last line of the file "{filename}" in the master data directory {contain} the string "{output}"')
+def impl(context, filename, contain, output):
+    return verify_master_file_last_line(context, filename, contain, output, "")
 
+@then('verify that the last line of the file "{filename}" in the master data directory {contain} the string "{output}"{escape}')
+def verify_master_file_last_line(context, filename, contain, output, escape):
+    if contain == 'should contain':
+        valuesShouldExist = True
+    elif contain == 'should not contain':
+        valuesShouldExist = False
+    else:
+        raise Exception("only 'should contain' and 'should not contain' are valid inputs")
 
-@then('verify that the last line of the file "{filename}" in the master data directory contains the string "{output}"')
-def impl(context, filename, output):
-    find_string_in_master_data_directory(context, filename, output)
+    find_string_in_coordinator_data_directory(context, filename, output, valuesShouldExist, (escape == ' escaped'))
 
-
-def find_string_in_master_data_directory(context, filename, output, escapeStr=False):
+def find_string_in_coordinator_data_directory(context, filename, output, valuesShouldExist, escapeStr=False):
     contents = ''
     file_path = os.path.join(master_data_dir, filename)
 
@@ -1414,8 +1419,11 @@ def find_string_in_master_data_directory(context, filename, output, escapeStr=Fa
     if escapeStr:
         output = re.escape(output)
     pat = re.compile(output)
-    if not pat.search(contents):
+    if valuesShouldExist and (not pat.search(contents)):
         err_str = "Expected stdout string '%s' and found: '%s'" % (output, contents)
+        raise Exception(err_str)
+    if (not valuesShouldExist) and pat.search(contents):
+        err_str = "Did not expect stdout string '%s' but found: '%s'" % (output, contents)
         raise Exception(err_str)
 
 
@@ -1485,8 +1493,14 @@ def impl(context, filename, some, output):
 
 
 
-@then('verify that the last line of the file "{filename}" in each segment data directory contains the string "{output}"')
-def impl(context, filename, output):
+@then('verify that the last line of the file "{filename}" in each segment data directory {contain} the string "{output}"')
+def impl(context, filename, contain, output):
+    if contain == 'should contain':
+        valuesShouldExist = True
+    elif contain == 'should not contain':
+        valuesShouldExist = False
+    else:
+        raise Exception("only 'should contain' and 'should not contain' are valid inputs")
     segment_info = []
     try:
         with dbconn.connect(dbconn.DbURL(dbname='template1'), unsetSearchPath=False) as conn:
@@ -1504,8 +1518,11 @@ def impl(context, filename, output):
         cmd.run(validateAfter=True)
 
         actual = cmd.get_stdout().decode('utf-8')
-        if output not in actual:
-            raise Exception('File %s on host %s does not contain "%s"' % (filepath, host, output))
+        if valuesShouldExist and (output not in actual):
+                raise Exception('File %s on host %s does not contain "%s"' % (filepath, host, output))
+        if (not valuesShouldExist) and (output in actual):
+            raise Exception('File %s on host %s contains "%s"' % (filepath, host, output))
+
 
 @given('the gpfdists occupying port {port} on host "{hostfile}"')
 def impl(context, port, hostfile):
@@ -1889,7 +1906,7 @@ def impl(context):
                               When the user runs "gpstart -a"
                               Then gpstart should return a return code of 0
                               And verify that a role "gpmon" exists in database "gpperfmon"
-                              And verify that the last line of the file "postgresql.conf" in the master data directory contains the string "gpperfmon_log_alert_level=warning"
+                              And verify that the last line of the file "postgresql.conf" in the master data directory should contain the string "gpperfmon_log_alert_level=warning"
                               And verify that there is a "heap" table "database_history" in "gpperfmon"
                               Then wait until the process "gpmmon" is up
                               And wait until the process "gpsmon" is up
@@ -2778,6 +2795,16 @@ def impl(context):
         code, message = job.reverify(conn)
         if not code:
             raise Exception(message)
+
+
+
+@given('the "{table_name}" table row count in "{dbname}" is saved')
+def impl(context, table_name, dbname):
+    if 'table_row_count' not in context:
+        context.table_row_count = {}
+    if table_name not in context.table_row_count:
+        context.table_row_count[table_name] = _get_row_count_per_segment(table_name, dbname)
+
 @given('distribution information from table "{table}" with data in "{dbname}" is saved')
 def impl(context, table, dbname):
     context.pre_redistribution_row_count = _get_row_count_per_segment(table, dbname)
@@ -2811,6 +2838,15 @@ def impl(context, table, dbname):
     if relative_std_error > tolerance:
         raise Exception("Unexpected variance for redistributed data in table %s. Relative standard error %f exceeded tolerance factor of %f." %
                 (table, relative_std_error, tolerance))
+
+@then('the row count from table "{table_name}" in "{dbname}" is verified against the saved data')
+def impl(context, table_name, dbname):
+    saved_row_count = context.table_row_count[table_name]
+    current_row_count = _get_row_count_per_segment(table_name, dbname)
+
+    if saved_row_count != current_row_count:
+        raise Exception("%s table in %s has %d rows, expected %d rows." % (table_name, dbname, current_row_count, saved_row_count))
+
 
 @then('distribution information from table "{table1}" and "{table2}" in "{dbname}" are the same')
 def impl(context, table1, table2, dbname):
