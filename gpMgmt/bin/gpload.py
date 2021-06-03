@@ -1171,7 +1171,7 @@ class gpload:
         self.cleanupSql = []
         self.distkey = None
         configFilename = None
-        while argv:
+        while len(argv)!=0:
             try:
                 try:
                     if argv[0]=='-h':
@@ -2654,7 +2654,7 @@ class gpload:
             except Exception, e:
                 # We need to be a bit careful about the error since it may contain non-unicode characters
                 strE = unicode(str(e), errors = 'ignore')
-                strF = unicode(str(sql), errors = 'ignore')
+                strF = unicode(str(sql.encode('utf-8')), errors = 'ignore')
                 self.log(self.ERROR, strE + ' encountered while running ' + strF)
 
         #progress.condition.acquire()
