@@ -1,0 +1,11 @@
+2021-06-03 15:53:38|INFO|gpload session started 2021-06-03 15:53:38
+2021-06-03 15:53:38|INFO|setting schema 'public' for table 'texttable1'
+2021-06-03 15:53:38|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
+2021-06-03 15:53:38|INFO|did not find an external table to reuse. creating ext_gpload_reusable_ce21ffa0_c440_11eb_8547_0050569e5d5e
+2021-06-03 15:53:38|ERROR|ERROR:  missing data for column "n8"  (seg2 slice1 10.117.190.97:25434 pid=25364)
+DETAIL:  External table ext_gpload_reusable_ce21ffa0_c440_11eb_8547_0050569e5d5e, line 1 of gpfdist://10.117.190.97:8081//home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt: "aaa|qwer|shjhjg|2012-06-01 15:30:30|1|111|834567|45.67|789.123|7.12345|123.456789"
+ encountered while running INSERT INTO public."texttable1" ("s1","s2","s3","dt","n1","n2","n3","n4","n5","n6","n7","n8") SELECT "s1","s2","s3","dt","n1","n2","n3","n4","n5","n6","n7","n8" FROM ext_gpload_reusable_ce21ffa0_c440_11eb_8547_0050569e5d5e
+2021-06-03 15:53:38|INFO|rows Inserted          = 0
+2021-06-03 15:53:38|INFO|rows Updated           = 0
+2021-06-03 15:53:38|INFO|data formatting errors = 0
+2021-06-03 15:53:38|INFO|gpload failed

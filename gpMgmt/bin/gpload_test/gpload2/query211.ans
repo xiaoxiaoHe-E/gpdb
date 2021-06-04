@@ -1,0 +1,11 @@
+2021-06-03 15:53:23|INFO|gpload session started 2021-06-03 15:53:23
+2021-06-03 15:53:23|INFO|setting schema 'public' for table 'texttable2'
+2021-06-03 15:53:23|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
+2021-06-03 15:53:23|INFO|did not find an external table to reuse. creating ext_gpload_reusable_c57b47e4_c440_11eb_b419_0050569e5d5e
+2021-06-03 15:53:23|ERROR|ERROR:  extra data after last expected column  (seg2 slice1 10.117.190.97:25434 pid=24521)
+DETAIL:  External table ext_gpload_reusable_c57b47e4_c440_11eb_b419_0050569e5d5e, line 1 of gpfdist://10.117.190.97:8081//home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt: "a|||b"
+ encountered while running INSERT INTO public."texttable2" ("s1","s2") SELECT "s1","s2" FROM ext_gpload_reusable_c57b47e4_c440_11eb_b419_0050569e5d5e
+2021-06-03 15:53:23|INFO|rows Inserted          = 0
+2021-06-03 15:53:23|INFO|rows Updated           = 0
+2021-06-03 15:53:23|INFO|data formatting errors = 0
+2021-06-03 15:53:23|INFO|gpload failed

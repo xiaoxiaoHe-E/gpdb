@@ -1,0 +1,170 @@
+You are now connected to database "reuse_gptest" as user "gpadmin".
+DROP SCHEMA IF EXISTS "s_\_c" CASCADE;
+NOTICE:  drop cascades to table "s_\_c".test_table
+DROP SCHEMA
+;
+CREATE SCHEMA "s_\_c";
+CREATE SCHEMA
+;
+DROP TABLE IF EXISTS ext_schema_spec_char_test;
+NOTICE:  table "ext_schema_spec_char_test" does not exist, skipping
+DROP TABLE
+;
+CREATE TABLE ext_schema_spec_char_test
+                (c1 text, c2 int) DISTRIBUTED BY (c1);
+CREATE TABLE
+;
+2021-06-03 18:07:56|INFO|gpload session started 2021-06-03 18:07:56
+2021-06-03 18:07:56|INFO|setting schema 'public' for table 'ext_schema_spec_char_test'
+2021-06-03 18:07:56|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data/two_col_one_row.txt" -t 30
+2021-06-03 18:07:56|INFO|did not find an external table to reuse. creating "s_\_c".ext_gpload_reusable_91a0b770_c453_11eb_b1fc_0050569e5d5e
+2021-06-03 18:07:57|INFO|running time: 0.05 seconds
+2021-06-03 18:07:57|INFO|rows Inserted          = 1
+2021-06-03 18:07:57|INFO|rows Updated           = 0
+2021-06-03 18:07:57|INFO|data formatting errors = 0
+2021-06-03 18:07:57|INFO|gpload succeeded
+DROP SCHEMA IF EXISTS "s_$_c" CASCADE;
+NOTICE:  drop cascades to table "s_$_c".test_table
+DROP SCHEMA
+;
+CREATE SCHEMA "s_$_c";
+CREATE SCHEMA
+;
+DROP TABLE IF EXISTS ext_schema_spec_char_test;
+DROP TABLE
+;
+CREATE TABLE ext_schema_spec_char_test
+                (c1 text, c2 int) DISTRIBUTED BY (c1);
+CREATE TABLE
+;
+2021-06-03 18:07:57|INFO|gpload session started 2021-06-03 18:07:57
+2021-06-03 18:07:57|INFO|setting schema 'public' for table 'ext_schema_spec_char_test'
+2021-06-03 18:07:57|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data/two_col_one_row.txt" -t 30
+2021-06-03 18:07:57|INFO|did not find an external table to reuse. creating "s_$_c".ext_gpload_reusable_91b97878_c453_11eb_859c_0050569e5d5e
+2021-06-03 18:07:57|INFO|running time: 0.05 seconds
+2021-06-03 18:07:57|INFO|rows Inserted          = 1
+2021-06-03 18:07:57|INFO|rows Updated           = 0
+2021-06-03 18:07:57|INFO|data formatting errors = 0
+2021-06-03 18:07:57|INFO|gpload succeeded
+DROP SCHEMA IF EXISTS "s_#_c" CASCADE;
+NOTICE:  drop cascades to table "s_#_c".test_table
+DROP SCHEMA
+;
+CREATE SCHEMA "s_#_c";
+CREATE SCHEMA
+;
+DROP TABLE IF EXISTS ext_schema_spec_char_test;
+DROP TABLE
+;
+CREATE TABLE ext_schema_spec_char_test
+                (c1 text, c2 int) DISTRIBUTED BY (c1);
+CREATE TABLE
+;
+2021-06-03 18:07:57|INFO|gpload session started 2021-06-03 18:07:57
+2021-06-03 18:07:57|INFO|setting schema 'public' for table 'ext_schema_spec_char_test'
+2021-06-03 18:07:57|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data/two_col_one_row.txt" -t 30
+2021-06-03 18:07:57|INFO|did not find an external table to reuse. creating "s_#_c".ext_gpload_reusable_91d23e8a_c453_11eb_900d_0050569e5d5e
+2021-06-03 18:07:57|INFO|running time: 0.05 seconds
+2021-06-03 18:07:57|INFO|rows Inserted          = 1
+2021-06-03 18:07:57|INFO|rows Updated           = 0
+2021-06-03 18:07:57|INFO|data formatting errors = 0
+2021-06-03 18:07:57|INFO|gpload succeeded
+DROP SCHEMA IF EXISTS "s_,_c" CASCADE;
+NOTICE:  drop cascades to table "s_,_c".test_table
+DROP SCHEMA
+;
+CREATE SCHEMA "s_,_c";
+CREATE SCHEMA
+;
+DROP TABLE IF EXISTS ext_schema_spec_char_test;
+DROP TABLE
+;
+CREATE TABLE ext_schema_spec_char_test
+                (c1 text, c2 int) DISTRIBUTED BY (c1);
+CREATE TABLE
+;
+2021-06-03 18:07:57|INFO|gpload session started 2021-06-03 18:07:57
+2021-06-03 18:07:57|INFO|setting schema 'public' for table 'ext_schema_spec_char_test'
+2021-06-03 18:07:57|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data/two_col_one_row.txt" -t 30
+2021-06-03 18:07:57|INFO|did not find an external table to reuse. creating "s_,_c".ext_gpload_reusable_91eac40a_c453_11eb_8e55_0050569e5d5e
+2021-06-03 18:07:57|INFO|running time: 0.05 seconds
+2021-06-03 18:07:57|INFO|rows Inserted          = 1
+2021-06-03 18:07:57|INFO|rows Updated           = 0
+2021-06-03 18:07:57|INFO|data formatting errors = 0
+2021-06-03 18:07:57|INFO|gpload succeeded
+DROP SCHEMA IF EXISTS "s_(_c" CASCADE;
+NOTICE:  drop cascades to table "s_(_c".test_table
+DROP SCHEMA
+;
+CREATE SCHEMA "s_(_c";
+CREATE SCHEMA
+;
+DROP TABLE IF EXISTS ext_schema_spec_char_test;
+DROP TABLE
+;
+CREATE TABLE ext_schema_spec_char_test
+                (c1 text, c2 int) DISTRIBUTED BY (c1);
+CREATE TABLE
+;
+2021-06-03 18:07:57|INFO|gpload session started 2021-06-03 18:07:57
+2021-06-03 18:07:57|INFO|setting schema 'public' for table 'ext_schema_spec_char_test'
+2021-06-03 18:07:57|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data/two_col_one_row.txt" -t 30
+2021-06-03 18:07:57|INFO|did not find an external table to reuse. creating "s_(_c".ext_gpload_reusable_92036dac_c453_11eb_92cc_0050569e5d5e
+2021-06-03 18:07:57|INFO|running time: 0.05 seconds
+2021-06-03 18:07:57|INFO|rows Inserted          = 1
+2021-06-03 18:07:57|INFO|rows Updated           = 0
+2021-06-03 18:07:57|INFO|data formatting errors = 0
+2021-06-03 18:07:57|INFO|gpload succeeded
+DROP SCHEMA IF EXISTS "s_""_c" CASCADE;
+NOTICE:  drop cascades to table "s_""_c".test_table
+DROP SCHEMA
+;
+CREATE SCHEMA "s_""_c";
+CREATE SCHEMA
+;
+DROP TABLE IF EXISTS ext_schema_spec_char_test;
+DROP TABLE
+;
+CREATE TABLE ext_schema_spec_char_test
+                (c1 text, c2 int) DISTRIBUTED BY (c1);
+CREATE TABLE
+;
+2021-06-03 18:07:57|ERROR|configuration file error: expected <block end>, but found '<scalar>', line 16
+DROP SCHEMA IF EXISTS "s_._c" CASCADE;
+NOTICE:  drop cascades to table "s_._c".test_table
+DROP SCHEMA
+;
+CREATE SCHEMA "s_._c";
+CREATE SCHEMA
+;
+DROP TABLE IF EXISTS ext_schema_spec_char_test;
+DROP TABLE
+;
+CREATE TABLE ext_schema_spec_char_test
+                (c1 text, c2 int) DISTRIBUTED BY (c1);
+CREATE TABLE
+;
+2021-06-03 18:07:57|ERROR|configuration file error: expected <block end>, but found '<scalar>', line 16
+DROP SCHEMA IF EXISTS "s_/_c" CASCADE;
+NOTICE:  drop cascades to table "s_/_c".test_table
+DROP SCHEMA
+;
+CREATE SCHEMA "s_/_c";
+CREATE SCHEMA
+;
+DROP TABLE IF EXISTS ext_schema_spec_char_test;
+DROP TABLE
+;
+CREATE TABLE ext_schema_spec_char_test
+                (c1 text, c2 int) DISTRIBUTED BY (c1);
+CREATE TABLE
+;
+2021-06-03 18:07:57|INFO|gpload session started 2021-06-03 18:07:57
+2021-06-03 18:07:57|INFO|setting schema 'public' for table 'ext_schema_spec_char_test'
+2021-06-03 18:07:58|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data/two_col_one_row.txt" -t 30
+2021-06-03 18:07:58|INFO|did not find an external table to reuse. creating "s_/_c".ext_gpload_reusable_923cb382_c453_11eb_9a6f_0050569e5d5e
+2021-06-03 18:07:58|INFO|running time: 0.05 seconds
+2021-06-03 18:07:58|INFO|rows Inserted          = 1
+2021-06-03 18:07:58|INFO|rows Updated           = 0
+2021-06-03 18:07:58|INFO|data formatting errors = 0
+2021-06-03 18:07:58|INFO|gpload succeeded

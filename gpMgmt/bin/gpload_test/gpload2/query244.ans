@@ -1,0 +1,11 @@
+2021-06-03 15:53:55|INFO|gpload session started 2021-06-03 15:53:55
+2021-06-03 15:53:55|INFO|setting schema 'public' for table 'texttable2'
+2021-06-03 15:53:55|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
+2021-06-03 15:53:55|INFO|did not find an external table to reuse. creating ext_gpload_reusable_d8c9dd74_c440_11eb_96a8_0050569e5d5e
+2021-06-03 15:53:56|ERROR|ERROR:  invalid byte sequence for encoding "UTF8": 0xd6d0  (seg1 slice1 10.117.190.97:25433 pid=26546)
+DETAIL:  External table ext_gpload_reusable_d8c9dd74_c440_11eb_96a8_0050569e5d5e, line 1 of file gpfdist://10.117.190.97:8081//home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt
+ encountered while running INSERT INTO public."texttable2" ("s1","s2") SELECT "s1","s2" FROM ext_gpload_reusable_d8c9dd74_c440_11eb_96a8_0050569e5d5e
+2021-06-03 15:53:56|INFO|rows Inserted          = 0
+2021-06-03 15:53:56|INFO|rows Updated           = 0
+2021-06-03 15:53:56|INFO|data formatting errors = 0
+2021-06-03 15:53:56|INFO|gpload failed

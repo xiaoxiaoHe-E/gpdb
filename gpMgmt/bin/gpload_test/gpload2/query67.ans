@@ -1,0 +1,9 @@
+2021-06-03 16:03:43|INFO|gpload session started 2021-06-03 16:03:43
+2021-06-03 16:03:43|INFO|setting schema 'public' for table 'testspecialchar'
+2021-06-03 16:03:43|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
+2021-06-03 16:03:43|INFO|did not find a staging table to reuse. creating staging_gpload_reusable_12847f47fea3b38d3c1876d13742f6ed
+2021-06-03 16:03:43|ERROR|unexpected error -- backtrace written to log file
+2021-06-03 16:03:43|INFO|rows Inserted          = 0
+2021-06-03 16:03:43|INFO|rows Updated           = 0
+2021-06-03 16:03:43|INFO|data formatting errors = 0
+2021-06-03 16:03:43|INFO|gpload failed

@@ -1,0 +1,10 @@
+2021-06-03 15:53:15|INFO|gpload session started 2021-06-03 15:53:15
+2021-06-03 15:53:15|INFO|setting schema 'public' for table 'texttable2'
+2021-06-03 15:53:15|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
+2021-06-03 15:53:15|INFO|did not find an external table to reuse. creating ext_gpload_reusable_c0e3159a_c440_11eb_be6b_0050569e5d5e
+2021-06-03 15:53:15|ERROR|could not run SQL "create external table ext_gpload_reusable_c0e3159a_c440_11eb_be6b_0050569e5d5e("s1" text,"s2" text)location('gpfdist://10.117.190.97:8081//home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt') format'text' (delimiter '' null '\N' escape '\') encoding'UTF8' ": ERROR:  delimiter must be a single ASCII character, or 'off'
+
+2021-06-03 15:53:15|INFO|rows Inserted          = 0
+2021-06-03 15:53:15|INFO|rows Updated           = 0
+2021-06-03 15:53:15|INFO|data formatting errors = 0
+2021-06-03 15:53:15|INFO|gpload failed
