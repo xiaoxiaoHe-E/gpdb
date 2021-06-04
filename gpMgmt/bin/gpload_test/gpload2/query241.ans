@@ -1,0 +1,11 @@
+2021-06-03 15:53:51|INFO|gpload session started 2021-06-03 15:53:51
+2021-06-03 15:53:51|INFO|setting schema 'public' for table 'texttable'
+2021-06-03 15:53:51|INFO|started gpfdist -p 8081 -P 8082 -f "/home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt" -t 30
+2021-06-03 15:53:51|INFO|did not find an external table to reuse. creating ext_gpload_reusable_d617fbce_c440_11eb_92ac_0050569e5d5e
+2021-06-03 15:53:51|ERROR|ERROR:  character 0xade5 of encoding "GBK" has no equivalent in "UTF8"  (seg1 slice1 10.117.190.97:25433 pid=26234)
+DETAIL:  External table ext_gpload_reusable_d617fbce_c440_11eb_92ac_0050569e5d5e, line 1 of file gpfdist://10.117.190.97:8081//home/gpadmin/workspace/gpdb/gpMgmt/bin/gpload_test/gpload2/data_file.txt
+ encountered while running INSERT INTO public."texttable" ("s1","s2","s3","dt","n1","n2","n3","n4","n5","n6","n7") SELECT "s1","s2","s3","dt","n1","n2","n3","n4","n5","n6","n7" FROM ext_gpload_reusable_d617fbce_c440_11eb_92ac_0050569e5d5e
+2021-06-03 15:53:51|INFO|rows Inserted          = 0
+2021-06-03 15:53:51|INFO|rows Updated           = 0
+2021-06-03 15:53:51|INFO|data formatting errors = 0
+2021-06-03 15:53:51|INFO|gpload failed

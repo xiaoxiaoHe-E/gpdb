@@ -1,0 +1,12 @@
+2021-06-03 16:23:35|INFO|gpload session started 2021-06-03 16:23:35
+2021-06-03 16:23:35|INFO|setting schema 'public' for table 'testspecialchar'
+2021-06-03 16:23:35|INFO|started gpfdist -p 8081 -P 8082 -f "pathto/data_file2.txt" -t 30
+2021-06-03 16:23:35|INFO|did not find a staging table to reuse. creating staging_gpload_reusable_a1101b5024707ea34f55e778f329e548
+2021-06-03 16:23:35|INFO|did not find an external table to reuse. creating ext_gpload_reusable_fd696718_c444_11eb_b11c_0050569e5d5e
+2021-06-03 16:23:35|ERROR|ERROR:  missing data for column "Field#2"  (seg0 slice1 *:25432 pid=965)
+DETAIL:  External table ext_gpload_reusable_fd696718_c444_11eb_b11c_0050569e5d5e, line 1 of gpfdist://*:pathto/data_file2.txt: "aaa'qwer'shjhjg'2012-06-01 15:30:30'1'732'834567'45.67'789.123'7.12345'123.456789"
+ encountered while running INSERT INTO staging_gpload_reusable_a1101b5024707ea34f55e778f329e548 ("Field1","Field#2") SELECT "Field1","Field#2" FROM ext_gpload_reusable_fd696718_c444_11eb_b11c_0050569e5d5e
+2021-06-03 16:23:35|INFO|rows Inserted          = 0
+2021-06-03 16:23:35|INFO|rows Updated           = 0
+2021-06-03 16:23:35|INFO|data formatting errors = 0
+2021-06-03 16:23:35|INFO|gpload failed

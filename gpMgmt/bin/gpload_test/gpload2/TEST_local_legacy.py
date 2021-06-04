@@ -1,6 +1,8 @@
-from TEST_local_base import *
 # coding=utf-8
-
+from TEST_local_base import write_config_file, psql_run, mkpath
+from TEST_local_base import prepare_before_test, drop_tables, runfile
+from TEST_local_base import runfile, copy_data, run, hostNameAddrs, masterPort
+import pytest
 # clean the database environment before running lecacy cases
 # in case that pytest run legacy in different order when new files are merged and that may lead case fail
 runfile(mkpath('setup.sql'))

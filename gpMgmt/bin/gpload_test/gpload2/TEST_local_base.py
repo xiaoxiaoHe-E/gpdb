@@ -291,7 +291,7 @@ def write_config_file(version='1.0.0.1', database='reuse_gptest', user=os.enviro
     if preload:
         f.write("\n   PRELOAD:" )
         if truncate:
-            f.write("\n    - TRUNCATE: "+truncate)
+            f.write("\n    - TRUNCATE: "+str(truncate))
         if reuse_tables:
             f.write("\n    - REUSE_TABLES: "+str(reuse_tables))
         if fast_match:
@@ -458,8 +458,8 @@ def get_table_name():
                      OR
                      relname LIKE 'staging_gpload_reusable%')
                      AND cls.relname=sch.table_name;"""
+                
     resultList = db.query(queryString.encode('utf-8')).getresult()
-    print(resultList)
     return resultList
 
 
@@ -530,7 +530,7 @@ def check_result(ifile,  optionalFlags = "-U3", outputPath = "", num=None):
 
 def ModifyOutFile(file,old_str,new_str):
     file = 'query'+file+'.out'
-    with open(file, "r", encoding="utf-8") as f1,open("%s.bak" % file, "w", encoding="utf-8") as f2:
+    with open(file, "r") as f1,open("%s.bak" % file, "w") as f2:
         for line in f1:
             for i in range(len(old_str)):
                 line = re.sub(old_str[i],new_str[i],line)
@@ -538,7 +538,7 @@ def ModifyOutFile(file,old_str,new_str):
     os.remove(file)
     os.rename("%s.bak" % file, file)
 
-Modify_Output_Case = [46,51,57,65]
+Modify_Output_Case = [46, 51, 57, 65, 68, 69]
 
 
 def doTest(num):
@@ -550,8 +550,9 @@ def doTest(num):
     runfile(file)
 
     if num in Modify_Output_Case:  # some cases need to modify output file to avoid compareing fail with ans file
-        pat1 = r'["|//]\d+\.\d+\.\d+\.\d+'  # host ip 
-        newpat1 = lambda x : x[0][0]+'*'
+        pat1 = r"(?:[0-9]{1,3}\.){3}[0-9]{1,3}"  # host ip 
+        #newpat1 = lambda x : x[0][0]+'*'
+        newpat1 = "*"
         pat2 = r'[a-zA-Z0-9/\_-]*/data_file'  # file location
         newpat2 = 'pathto/data_file'
         pat3 = r', SSL off$'
@@ -614,3 +615,4 @@ def test_00_gpload_formatOpts_setup():
     file = mkpath('setup.sql')
     runfile(file)
     check_result(file)
+
