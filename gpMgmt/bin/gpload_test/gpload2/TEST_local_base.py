@@ -259,7 +259,7 @@ def write_config_file(version='1.0.0.1', database='reuse_gptest', user=os.enviro
     if quote:
         f.write("\n    - QUOTE: "+quote)
     if header:
-        f.write("\n    - HEADER: "+header)
+        f.write("\n    - HEADER: "+str(header))
     if transform:
         f.write("\n    - TRANSFORM: "+transform)
     if transform_config:
