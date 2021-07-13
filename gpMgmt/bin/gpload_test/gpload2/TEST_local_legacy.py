@@ -372,8 +372,6 @@ def test_38_gpload_without_preload():
     copy_data('external_file_04.txt','data_file.txt')
     write_config_file(mode='insert',reuse_tables=True,fast_match=False,file='data_file.txt',error_table="err_table",error_limit=1000,preload=False)
 
-# gpload5 does not support fill_missing_fields
-'''
 @pytest.mark.order(39)
 @prepare_before_test(num=39)
 def test_39_gpload_fill_missing_fields():
@@ -382,21 +380,6 @@ def test_39_gpload_fill_missing_fields():
     runfile(file)
     copy_data('external_file_04.txt','data_file.txt')
     write_config_file(mode='insert',reuse_tables=False,fast_match=False,file='data_file.txt',table='texttable1', error_limit=1000, fill_missing_fields=True)
-'''
-
-@pytest.mark.order(39)
-@prepare_before_test(num=39)
-def test_39_gpload_header():
-    "39 gpload header reuse table MPP:31557"
-    file = mkpath('setup.sql')
-    runfile(file)
-    copy_data('external_file_47.txt','data_file.txt')
-    write_config_file(mode='insert',reuse_tables=True,fast_match=False, file='data_file.txt',config='config/config_file1', table='testheaderreuse', delimiter="','", format='csv', quote="'\x22'", encoding='LATIN1', log_errors=True, error_limit='1000', header=True, truncate=True, match_columns=False)
-    write_config_file(mode='insert',reuse_tables=True,fast_match=False, file='data_file.txt',config='config/config_file2', table='testheaderreuse', delimiter="','", format='csv', quote="'\x22'", encoding='LATIN1', log_errors=True, error_limit='1000', truncate=True, match_columns=False)
-    f = open(mkpath('query39.sql'),'w')
-    f.write("\! gpload -f "+mkpath('config/config_file1')+ " -d reuse_gptest\n")
-    f.write("\! gpload -f "+mkpath('config/config_file2')+ " -d reuse_gptest\n")
-    f.close()
 
 @pytest.mark.order(40)
 @prepare_before_test(num=40)
